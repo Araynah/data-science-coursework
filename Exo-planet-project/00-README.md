@@ -3,11 +3,6 @@
 
 This repository contains my final project for CMSE201—a course focused on data science and machine learning techniques. The project aims to analyze a dataset to uncover insights and build predictive models that answer a key research question in the field of [your field/subject]. It involves data cleaning, exploratory data analysis (EDA), model development, and result interpretation.
 
-## Repository Structure
-
-- **CMSE201_FinalProjectTemplate-Copy1.ipynb**  
-  This notebook serves as a project template. It provides guidelines and a framework for the final project, including sections for data exploration, preprocessing, model building, evaluation, and visualization.
-
 - **ProjectCheckpoint-Araynah.ipynb**  
   This notebook captures a checkpoint of the project. It includes:
   - Exploratory Data Analysis (EDA)
