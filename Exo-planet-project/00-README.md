@@ -70,7 +70,6 @@ This project represents a full end-to-end workflow:
 - [All Exoplanets Dataset (Kaggle)](https://www.kaggle.com/datasets/shivamb/all-exoplanets-dataset)
 - [Planetary Biology | Habitable Zones](https://www.planetarybiology.com/calculating_habitable_zone.html)
 - [GeeksforGeeks | Data Visualization Tutorials](https://www.geeksforgeeks.org)
-- [OpenAI | GPT-4 assistance]
 - [Seaborn | Heatmap Example](https://seaborn.pydata.org/examples/spreadsheet_heatmap.html)
 - [Habitable Zone Calculator GitHub](https://github.com/Eelt/HabitableZoneCalculator)
 
