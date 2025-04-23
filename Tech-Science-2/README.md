@@ -20,7 +20,7 @@ Can observable galaxy properties be leveraged to accurately predict galaxy subcl
 - Random Forest captures nonlinear interactions and handles imbalance more robustly.
 
 ## Team Contributions  
-- **Araynah D.:** Data ingestion, SVM modeling and evaluation, preprocessing and visualization code.  
+- **Araynah D.:** Data ingestion, SVM modeling and evaluation, preprocessing and visualization code, Forest model.  
 - **Palmer W.:** Confusion matrix and classification report analysis, slide preparation.  
 - **Katrina S.:** Feature importance extraction, code documentation, heatmap.  
 - **Yihan W.:** Data visualization (distribution and sky maps), README and slides formatting.
