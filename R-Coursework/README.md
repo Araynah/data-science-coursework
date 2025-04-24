@@ -1,4 +1,4 @@
-# R Coursework
+# R Coursework UNDERCONSTRUCTION
 
 This folder contains R-based assignments and projects completed as part of my Data Science coursework at Michigan State University. The work emphasizes data manipulation, statistical analysis, and reproducible reporting using R and RMarkdown.
 
@@ -14,7 +14,7 @@ This folder contains R-based assignments and projects completed as part of my Da
   - Data visualization with `ggplot2`.
 - **Skills Demonstrated**: Comprehensive data analysis, interpretation of statistical results, and effective communication through RMarkdown reports.
 
-*Note: Replace [Project Title] and the description with your actual project details.*
+*Note: Replace  and the description with your actual project details.*
 
 ---
 
