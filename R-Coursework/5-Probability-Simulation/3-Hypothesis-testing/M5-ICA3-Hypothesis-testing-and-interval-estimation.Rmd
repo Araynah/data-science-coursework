@@ -1,0 +1,246 @@
+---
+title: "Sleepy mammals: Hypothesis testing and interval estimation"
+author: "insert group #"
+date: "M5 ICA3"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #262626;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #71C144;
+}
+/* Level 2 header */
+h2 {
+  color: #71C144;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #71C144;
+    border-color: #337ab7;
+</style>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      error = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+set.seed(12345)
+```
+
+
+
+# Introduction
+
+The data set `msleep` is part of the `ggplot2` package and it contains information on 83 mammals with regards to their sleep behavior. To get started, load packages the `tidyverse` and `infer`.
+
+```{r}
+library(tidyverse)
+library(infer)
+```
+
+Take a `glimpse()` at the `msleep` data set. For more details, type `?msleep` in your console.
+
+```{r}
+glimpse(msleep)
+```
+
+For the questions that follow, use a sequence of functions in the package `infer`. 
+
+
+
+# Estimation
+
+In this section you will construct confidence intervals for the average number of sleep hours of all mammals and for the standard deviation of the same variable. 
+
+## Population mean
+
+1. What are the mean and standard deviation of the total amount of sleep for the mammals in the data-set?
+
+```{r}
+mean_sd <- msleep %>%
+  filter(!is.na(sleep_total)) %>%
+  summarise(mean_sleep = mean(sleep_total), sd_sleep = sd(sleep_total))
+
+mean_sd
+```
+
+2. Generate a bootstrap distribution of mean amount of sleep time of all mammals, using 10,000 bootstrap samples.
+
+```{r}
+
+boot_strap <- msleep %>% 
+  specify(response = sleep_total) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat="mean")
+
+ggplot(boot_strap, aes(x = stat)) +
+  geom_histogram(binwidth = 0.5, color = 'blue')
+```
+
+3. What are the center and spread of the bootstrap distribution? How does the center compare to the mean of the original data. 
+
+```{r}
+# The center is close the sd is pretty off
+boot_mean <- mean(boot_strap$stat)
+sd(boot_strap$stat)
+```
+
+4. Create a 95% confidence interval for the mean amount of sleep hours of all mammals, using the percentile method, that is, by selecting the appropriate percentiles in the bootstrap distribution. Hint: `quantile(x, probs)`.
+
+```{r}
+
+q <- quantile(boot_strap$stat, probs = c(0.025,0.975))
+
+q
+```
+5. Interpret the 95% confidence interval that you found.    
+**Answer: ...**
+
+We can see that that 97.5 percent of the data is around 11.37 and the lower left like 1.5 percent about 2.5
+
+6. In the bootstrap distribution, mark the end-points and the center of the 95% confidence interval with three vertical lines, as shown in the html reference file. Hint: `geom_vline(xintercept, col, size)` 
+
+```{r}
+
+ggplot(boot_strap, aes(x = stat)) +
+  geom_histogram(fill = 'skyblue', color = 'blue') +
+  geom_vline(xintercept = q[1], col = 'red') +
+  geom_vline(xintercept = q[2], col = 'red') + 
+  geom_vline(xintercept = boot_mean, col = 'purple')
+```
+
+
+
+7. Create 90% and 99% confidence intervals for the mean amount of sleep time of all mammals. What do you notice about the widths of the three intervals?
+
+```{r}
+q_90 <- quantile(boot_strap$stat, probs = c(0.05,0.95))
+q_99 <- quantile(boot_strap$stat, probs = c(0.005, 0.995))
+
+q_90
+q_99
+```
+**Answer: ...**
+They are all very close in length and means
+
+
+
+## Population standard deviation
+
+8. Create a bootstrap distribution of sample standard deviations using the `sleep_total` variable. Find a 95% confidence interval for the standard deviation of the number of sleep hours of all mammals and mark the center and endpoints of the interval with vertical lines overlaid on the bootstrap distribution.
+
+```{r}
+boot_sd <- msleep %>%
+  filter(!is.na(sleep_total)) %>%
+  specify(response = sleep_total) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "sd")
+
+boot_sd
+
+# Plot the bootstrap distribution with mean and 95% CI
+mean_sd  <- mean(boot_sd$stat)
+ci_sd    <- quantile(boot_sd$stat, c(0.025, 0.975))
+
+ggplot(boot_sd, aes(x = stat)) +
+  geom_histogram(binwidth = 0.1, fill = "lightgreen", color = "darkgreen") +
+  geom_vline(xintercept = ci_sd[1], col = "red",   size = 1) +
+  geom_vline(xintercept = ci_sd[2], col = "red",   size = 1) +
+  geom_vline(xintercept = mean_sd,  col = "purple", size = 1) +
+  labs(title = "Bootstrap Distribution of SD(sleep_total)",
+       x     = "Sample SD of sleep_total",
+       y     = "Frequency") +
+  theme_minimal()
+```
+
+
+# Hypothesis testing
+
+## Test for the mean
+
+In our class lecture we discussed the average sleep hours of mammals in the context of a two sided hypothesis test. Let us examine how the results change (if at all) when the test is one sided. 
+
+9. Find the average number of sleep hours per day for the non-human mammals in our data-set. 
+
+```{r}
+nonhuman <- msleep %>%
+  filter(name != "Human", !is.na(sleep_total))
+
+nonhuman %>%
+  summarise(mean_sleep = mean(sleep_total))
+```
+
+A researcher claims non-human mammals sleep, on average, 9.5 hours a day. Our sample shows that non-human mammals sleep, on average, 10.46 hours a day. Is this enough evidence to suggest non-human mammals have a higher mean number of sleep hours per day?
+
+10. Identify the parameter of interest and state the null and alternative hypotheses to answer the question above.
+
+**Answer: ...**
+
+
+
+11. Generate the null distribution and place a vertical line at the value of the observed sample mean of 10.46. Hint: you need to filter out the humans from the data-set first.
+
+```{r}
+
+nonhuman <- msleep %>%
+  filter(name != "Human", !is.na(sleep_total))
+
+# observed mean
+obs_mean <- mean(nonhuman$sleep_total)
+
+# bootstrap-based null distribution under H0: μ = 9.5
+null_dist <- nonhuman %>%
+  specify(response = sleep_total) %>%
+  hypothesize(null = "point", mu = 9.5) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+
+# plot it
+ggplot(null_dist, aes(x = stat)) +
+  geom_histogram(binwidth = 0.1, fill = "lightgray", color = "black") +
+  geom_vline(xintercept = obs_mean, col = "blue", size = 1) +
+  labs(
+    title = "Null Distribution of Mean Sleep (H₀: μ = 9.5)",
+    x     = "Mean sleep_total",
+    y     = "Frequency"
+  ) +
+  theme_minimal()
+```
+
+
+12. Use the simulated null distribution to compute the p-value. Recall that the p-value is the probability of observing data at least as favorable to the alternative hypothesis as the current data set, given that the null hypothesis is true.
+
+```{r}
+p_value_two   <- mean(abs(null_dist$stat - 9.5) >= abs(obs_mean - 9.5))
+p_value_two
+```
+
+13. What conclusion do you draw from the test, at 5% significance level? 
+
+**p-value is > 5% at 5.4% so re fail to reject**
+ 
+ </b>
+
+# References
+
+1. V. M. Savage and G. B. West. A quantitative, theoretical framework for understanding mammalian sleep. Proceedings of the National Academy of Sciences, 104 (3):1051-1056, 2007.
+
+2. https://cran.r-project.org/web/packages/infer/vignettes/flights_examples.html

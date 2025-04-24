@@ -1,0 +1,161 @@
+---
+title: "Data tidying with tidyr"
+author: "#13 Araynah.D"
+date: "Module 2 ICA 3 "
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+```
+
+# Introduction
+
+Messy data is common. A large portion of your time may be spent cleaning, parsing, and organizing a data set. Tidy data is the ultimate goal. Four functions available in the `tidyr` package will help make this process easier:
+
+- `pivot_longer()`
+
+- `pivot_wider()`
+
+- `separate()`
+
+- `unite()`
+
+Package `tidyr` is automatically loaded when you load `tidyverse`.
+
+```{r packages}
+library(tidyverse)
+```
+
+Open the file `gapminder-raw.csv` to see what it contains and its format. Read in `gapminder-raw.csv` to R and save it as an object called `gapminder1`. Check a few of the rows below to make sure your data was read in properly.
+
+```{r read-data}
+
+gapminder1 <- read.csv("gapminder-raw.csv")
+gapminder1
+```
+
+**Comment on why the above data frame is not tidy?**
+- Rows and columns still have NA values and such rows that dont server purpose
+
+# Tidying data { - .tabset .tabset-fade .tabset-pills}
+
+You will now tidy `gapminder1` by using a series of functions in the `tidyr` package.
+
+In each step, examine the resulting data-set, and attempt to produce code that generates that data-set. Carefully examine the variable names, types, and first few rows.
+
+## Step 1: From wide to long { - .tabset .tabset-fade .tabset-pills}
+
+Use `gapminder1` to create a new data frame, `gapminder2`, that looks like below. (Note that Abkhazia has missing values for life expectancy for all years. To see the first non missing values go to lines 211-220.)
+
+```{r wide to long}
+gapminder2 <- pivot_longer(gapminder1, cols = 2:218, names_to = "year", values_to = "life.exp")
+tail(gapminder2)
+```
+
+### Hints
+
+- `pivot_longer()` takes multiple columns and collapses them into two. The names of the columns move to a new column defined by `names_to`, while the values of the columns move to a column defined by `values_to`
+
+- `pivot_longer()` transforms the data frame from wide format to long format. 
+
+- You want to gather all but the first column of `gapminder1`.
+
+- Run each line of the code below in your console for a small example.
+
+```{r mini-example, eval = FALSE}
+mini_iris <- iris[c(1, 51, 101), ]
+
+pivot_longer(data=mini_iris, cols=-Species, names_to="flower_att", values_to="measurement")
+```
+
+## Step 2: Fixing the variable names { - .tabset .tabset-fade .tabset-pills}
+
+Note that the name of the first column in the previous data frame is "Life.expectancy". Change this to "country", leaving the other column names unchanged. The new data frame should look like this:
+
+```{r add variable names}
+colnames(gapminder2)[1] <- "Country"
+gapminder2
+```
+
+
+## Step 3: Fixing the years { - .tabset .tabset-fade .tabset-pills}
+
+Fix now the variable year by removing the "X" in front of all the years. Note that the type of the new variable should be `int` and not `chr`. 
+
+
+```{r tidying the data}
+
+year_new <- gsub("X","",gapminder2$year)
+gapminder2$year = as.integer(year_new)
+
+
+gapminder2
+```
+
+
+# Visualizations using base R functions { - .tabset .tabset-fade .tabset-pills}
+
+Recreate plots 1 and 2. Try to create as many features without looking at the hints, and **comment on any interesting trends/relationships you observe**.
+
+## Plot 1 { - .tabset .tabset-fade .tabset-pills}
+
+### Plot {-}
+
+```{r plot1, cache=TRUE}
+usa <- subset(gapminder2,Country=="United States")
+
+plot(usa$year, usa$life.exp, type="l", lwd=2, col = "red", main= "US' Mean life expectancy increases", sub="large drops during the Civial War & WWI", xlab= "Year", ylab= "Life Expectancy" )
+abline(v=1860)
+
+```
+
+### Hints {-}
+
+- Use `subset()` to filter `gapminder2` for United States
+
+- `plot(x = year, y = life.exp, type="l",...)`
+
+- Use `lwd`, `col`, `main`,`sub`,`xlab` and `ylab` in the `plot()`
+
+- `abline(v=1860)`
+
+## Plot 2 { - .tabset .tabset-fade .tabset-pills}
+
+### Plot 
+
+```{r plot2, cache=TRUE}
+countries <- subset(gapminder2, Country== c("China", "India", "Indonesia", "United States", "Brazil"))
+
+#plot(countries$year[Country=="China"], countries$life.exp[Country=="China"], type="*", lwd=2, col="blue", main="Life #Expectancy Across Time \n for China, India, Indonesia, United States, Brazil", xlab= "Year", ylab= "Life Expectancy")
+#abline(v=1960)
+```
+
+### Hints 
+
+- Use `subset()` to filter `gapminder2` for 
+  `c("China", "India", "Indonesia", "United States", "Brazil")`
+  
+- `plot(x = year[country=="China"], y = life.exp[country=="China"], type="l", ...)` for "China".
+
+- Use `\n` in the middle of the title
+
+- Use `lines(year[country=="India"], life.exp[country=="India"], type = "l", col = "red", lwd=2)` for each additional country.
+
+- Add `ylim=c(0,90)` in the plot function
+
+- Add legend with `legend("topleft", legend = c("China", "India", "Indonesia", "US", "Brazil"), col = c("black", "red", "green","orange","purple"), lty = 1, cex = 0.5)`
+
+
+
+# References
+
+1. https://www.gapminder.org/

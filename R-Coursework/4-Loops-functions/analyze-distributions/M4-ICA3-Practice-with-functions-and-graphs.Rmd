@@ -1,0 +1,239 @@
+---
+title: "Practice with functions and graphs to analyze distributions"
+author:  "<insert group #>"
+date: "M4 ICA3"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #1D5D53;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #1D5D53;
+}
+/* Level 2 header */
+h2 {
+  color: #1D5D53;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #1D5D53;
+    border-color: #337ab7;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      comment = NA)
+```
+
+```{r}
+library(tidyverse)
+library(knitr)
+```
+
+# Body temperature data
+
+A paper, [Decreasing human body temperature in the United States since the Industrial Revolution](https://elifesciences.org/articles/49555), presented evidence that human body temperatures in the United States have been decreasing over the past one hundred or so years. (Many scientists dispute the conclusions of the paper.) One of the data sets in the paper is taken from the NHANES (National Health and Nutrition Examination Study), and is available in the file `NHANES_processed.csv`. There are many variables in the data, but our focus will be on the variable `temp` that provides resting oral body temperatures.
+
+1. Draw a histogram of the body temperature variable.  
+
+```{r}
+nhanes <- read.csv("NHANES_processed.csv",header = TRUE)
+names <- read.csv("CensusNames.csv")
+nhanes
+```
+
+```{r}
+
+Temperture <- nhanes$temp
+hist(Temperture)
+```
+
+
+The *empirical cumulative distribution function* (ecdf) gives the proportion of data values at or below a particular value. In the case of the body temperature data, $\text{ecdf}(98.1)$, for example, gives the proportion of temperatures in the data set below $98.1$ degrees. A few minutes of thought reveals that 
+
++ $\text{ecdf}(x) = 0$ if $x$ is less than the minimum temperature in the data set;
++ $\text{ecdf}(x) = 1$ if $x$ is greater than or equal to the maximum temperature in the data set;
++ $\text{ecdf}(x)$ is a non-decreasing function of $x$.
+
+2. Use the `stat_ecdf` function in `ggplot2` to draw an "empirical cumulative distribution function" for the body temperature variable.
+
+```{r}
+ggplot(nhanes,aes(Temperture))+
+  stat_ecdf(geom = "step")
+```
+
+
+
+Look at the plot of the ecdf to gain more insight into the behavior of the ecdf.
+
+3. Plot vertical lines in the ecdf plot for the estimate of the 25th, 50th, and 75th percentiles of the temperature data and estimate the values. Hint: use the `geom_vline()` function with an `xintercept` argument. 
+
+
+```{r}
+ggplot(nhanes,aes(Temperture)) +
+  stat_ecdf(geom = "step") +
+  geom_vline(xintercept=98) + geom_vline(xintercept=98.4) + geom_vline(xintercept=98.6)
+```
+
+How do these compare with the percentiles computed via the `summary()` function? 
+
+```{r}
+summary(nhanes)
+```
+
+
+**The 20th,50th,75th line up pretty good compared to the plots vs summary** 
+
+
+4. How does the mean temperature compare to the median temperature? What is the comparison telling you about the distribution of temperature?
+
+**They are both very close 98.40 and 98.31 close, tells us that the distribution of data is very close in range**
+
+
+
+# Name data
+
+The file `CensusNames.csv` contains data on surnames in the United States, including the name, the rank of the name among all names, and the number of people in the United States with that name. (Some uncommon names are not included in the data.)
+
+5. Is your surname in the list? If so, what is its rank, and how many people in the United States have that name?
+
+```{r}
+name <- names %>%
+  filter(name == "DOVER") %>%
+  group_by(count)
+```
+
+
+6. Draw a histogram and an ecdf plot of the variable which counts the number of people with a name. What do you notice from these plots?
+
+```{r}
+ggplot(name, aes(x=count)) +
+  geom_histogram()
+
+ggplot(name,aes(count))+
+  stat_ecdf(geom = "step")
+```
+
+**They dint really give much information to draw a conclusion about the information**
+
+7. Draw a histogram and an ecdf plot of the base 10 logarithm of the counts. The R function `log10()` computes base 10 logarithms.
+
+```{r}
+ggplot(name, aes(x=log10(count))) +
+  geom_histogram()
+
+ggplot(name,aes(log10(count)))+
+  stat_ecdf(geom = "step")
+```
+
+
+8. From the ecdf plot of the logarithm of the counts, estimate the 25th, 50th, and 75th percentiles of the counts. Compare these to the computed percentiles from the `summary()` function. Are they similar?
+
+
+```{r}
+summary(name$count)
+```
+
+**Maybe my plots are wrong but they dont really comapre**
+
+
+9. How does the mean count compare to the median count? How does the mean count compare to the 75th percentile of the counts?
+
+**The numbers are all the same.**
+
+
+# US cities data
+
+**This section is similar to the previous one.**
+
+The file `UnitedStatesCities.csv` contains data on cities in the United States, including the name of the city, the population rank of the city among all cities, and the number of people living in the city in 2010. 
+
+10. What are the population and rank of East Lansing?
+
+```{r}
+city <- read.csv("UnitedStatesCities.csv")
+city
+city %>%
+  filter(City == "Houston city, Texas") %>%
+  select(Rank, Population2010)
+```
+
+
+11. Draw a histogram and an ecdf plot of the populations. Do these data seem more like the data on body temperatures or the data on the count of people with a particular name?
+
+```{r}
+ggplot(city, aes(x = Population2010)) +
+  geom_histogram(
+    binwidth = 10000,
+    fill     = "steelblue",
+    color    = "black"
+  ) +
+  labs(
+    title = "Histogram of U.S. City Populations",
+    x     = "Population",
+    y     = "Count"
+  ) +
+  theme_minimal()
+
+ggplot(city, aes(x = Population2010)) +
+  stat_ecdf(geom = "step") +
+  labs(
+    title = "ECDF of U.S. City Populations",
+    x     = "Population",
+    y     = "ECDF"
+  ) +
+  theme_minimal()
+```
+
+
+
+12. Draw a histogram and an ecdf plot of the base-10 logarithm of the populations.
+
+```{r}
+city <- city %>% 
+  mutate(logpop = log10(Population2010))
+
+# Histogram of log10(population)
+ggplot(city, aes(x = logpop)) +
+  geom_histogram(binwidth = 0.1, fill = "darkcyan", color = "black") +
+  labs(title = "Histogram of log10(Population)",
+       x     = "log10(Population)",
+       y     = "Count") +
+  theme_minimal()
+
+# ECDF of log10(population)
+ggplot(city, aes(x = logpop)) +
+  stat_ecdf(geom = "step") +
+  labs(title = "ECDF of log10(Population)",
+       x     = "log10(Population)",
+       y     = "ECDF") +
+  theme_minimal()
+```
+
+
+13. From the ecdf plot of the logarithm of the populations, estimate the 25th, 50th, and 75th percentiles of the populations. Compare these to the computed percentiles from the `summary()` function. Are they similar?
+
+```{r}
+summary(city$logpop)
+
+# Extract exactly the 1st, 2nd, and 3rd quartiles via quantile()
+quantile(city$logpop, probs = c(0.25, 0.5, 0.75))
+```
+
+

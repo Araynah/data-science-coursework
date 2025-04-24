@@ -1,0 +1,428 @@
+---
+title: "STT 180 (25SP) Homework 1"
+author: "Araynah Dover"
+date: "Jan 23 - Feb 7, 2025"
+output:
+  html_document:
+    toc: true
+    number_sections: false
+    toc_float: true
+    toc_depth: 4
+    df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+```
+
+**General Instructions:**
+
+-   This is an individual assignment.
+    You may consult with others as you work on the assignment, but each student should write up a separate set of solutions.
+
+-   Rather than creating a new Rmd file, just add your solutions to the supplied Rmd file.
+    Submit both the Rmd file and the resulting HTML file to D2L.
+
+-   Except for questions, or parts of questions, that ask for your commentary, use R in a code chunk to answer the questions.
+
+-   The code chunk option **`echo = TRUE`** is specified in the setup code chunk at the beginning of the document.
+    Please do not override this in your code chunks.
+
+-   A solution will lose points if the Rmd file does not compile.
+    If one of your code chunks is causing your Rmd file to not compile, you can use the `eval = FALSE` option.
+    Another possibility is to use the `error = TRUE` option in the code chunk.
+
+-   This Homework is due on **Friday, Feb 7th, 2025, by 11 pm.**
+
+This homework assignment consists of three sections.
+The first section deals with data structures and the second section is a small data analysis project.
+You will use the data wrangling and tidying knowledge for this section.
+
+# Section 1 (30 points)
+
+This section focuses on some basic manipulations of vectors in R.
+
+## Question 1 (6 points)
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+Create three vectors in R: One called `evennums` which contains the even integers from 1 through 12.
+One called `charnums` which contains character representations of the numbers 4 through 8, namely, "4", "5", "6", "7", "8".
+And one called `mixed` which contains the same values as in `charnums` but which also contains the letters "x", "y" and "z".
+**No commentary or explanations are necessary.**
+:::
+
+```{r}
+evennums <- c(2,4,6,8,10,12)
+charnums <- c("4","5","6","7","8")
+mixed <- c(2,4,6,8,10,12,"x","y")
+```
+
+## Question 2 (6 points)
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+Investigate what happens when you try to convert `evennums` to character and to logical.
+  - When converting to a char using the as.char method when outputting the list it converted elements to chars and in turn the type is also a char
+  - When converting to logical all values were converted to true being that the ints are greater than 1, Type is logical as well
+Investigate what happens when you convert `charnums` to numeric.
+  - When converting to numeric tghe output was numeric values as well as the type of list
+Investigate what happens when you convert `mixed` to numeric.
+  - When converting to numeric for mixed list we got NA values for the chars and num values for ints, the type returned was a double
+**Comment on each of these conversions.**
+:::
+
+```{r}
+
+# Converting evennums to char
+evennums_char <- as.character(evennums)
+print(evennums_char)
+typeof(evennums_char)
+
+# Converting evennums to log
+evennums_logical <- as.logical(evennums)
+print(evennums_logical)
+typeof(evennums_logical)
+
+# Converting charnums to numeric
+charnums_numeric <- as.numeric(charnums)
+print(charnums_numeric)
+typeof(charnums_numeric)
+
+# Convert mixed to numeric
+mixed_numeric <- as.numeric(mixed)
+print(mixed_numeric)
+typeof(mixed_numeric)
+```
+
+## Question 3 (10 points)
+
+**No commentary is necessary on this part.**
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+a.  Show how to extract the second element of `evennums.`
+:::
+
+```{r}
+even_second <- evennums[2]
+even_second
+```
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+b.  Show how to extract the last element of `evennums.` In this case you are NOT allowed to use the fact that `evennums` has six elements, rather, you must give code which would work no matter how many elements `evennums` has.
+:::
+
+```{r }
+even_last <- evennums[length(evennums)]
+even_last
+```
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+c.  Show how to extract all but the first element of `evennums.`
+:::
+
+```{r}
+even_first <- evennums[-1]
+even_first 
+```
+
+```{=html}
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+```
+::: blue
+d.  Show how to extract all but the first two and last two elements of `evennums`.
+:::
+
+```{r}
+even_extract <- evennums[3:(length(evennums)-2)]
+even_extract
+```
+
+e.  Calculate the mean of `evennums`. Calculate the standard deviation of the `evennums`.
+
+```{r}
+mean(evennums)
+sd(evennums)
+```
+
+## Question 4 (8 points)
+
+Use the help function to find out more about `sd` and 'floor\`.
+**What does the function do?** **What are the arguments?** **Which arguments, if any, are optional?** **Give one simple example using the function.**
+- `sd`: Gives standard deviation of values in given container, takes a conatiner or range of values and defualt na.rm = FALSE which is optional  removes missing values
+- `floor`:Takes a single numeric argument x and returns a numeric vector containing the largest integers not greater than the corresponding elements of x.
+
+```{r}
+sd(23:85)
+
+floor(5.8)
+```
+
+# Section 2 (30 points)
+
+The dataset contains information about the prices (in USD) of Netflix subscriptions around the world.
+
+## Setting up the data set
+
+Read in the data.
+
+```{r}
+netflix_data <- read.csv("Netflix-subscription-fee-Dec-2021.csv", header = TRUE)
+```
+
+## Question 1 (4 points)
+
+Using the `str` function, show how `netflix_data` structured.
+**What are the variable names? What is the data type of each variable in the data frame?**
+- Country.Code, Country, Total.Library.Size, Number.of.Tv.Shows, Number, Types range from chars, ints doubles
+
+```{r}
+
+str(netflix_data)
+```
+
+## Question 2 (4 points)
+
+Print out the data from the column called `Cost.Per.Month.Basic`.
+Show the data type of the data in this column.
+
+```{r}
+per_month = netflix_data$Cost.Per.Month.Basic
+per_month
+typeof(per_month)
+```
+
+## Question 3 (4 points)
+
+Print out the data from the column called `Number.of.TV.Shows`.
+Show the data type of the data in this column.
+
+```{r}
+number_show = netflix_data$Number.of.TV.Shows
+number_show
+typeof(number_show)
+```
+
+## Question 4 (4 points)
+
+Plot the relationship between the number of TV shows available, and the cost of a basic subscription.
+
+```{r}
+plot(number_show,per_month)
+```
+
+## Question 5 (4 points)
+
+**In general does having more TV shows mean paying a higher subscription price? Use the plot from the previous question to justify your answer.**
+
+## Question 6 (6 points)
+
+Create a new column in `netflix_data` called `Upgrade.Cost`, and set it equal to the difference between paying for Basic and paying for Premium.
+It should represent the cost of upgrading you Netflix subscription from Basic to Premium.
+
+```{r}
+per_month_basic = netflix_data$Cost.Per.Month.Basic
+per_month_premium = netflix_data$Cost.Per.Month.Premium
+
+netflix_data$Upgrade.Cost = per_month_basic / per_month_premium
+netflix_data
+```
+
+## Question 7 (4 points)
+
+Which country has the highest upgrade cost, according to your new column?
+Show how you found you answer using code.
+
+```{r}
+
+max_upgrade <- max(netflix_data$Upgrade.Cost)
+
+max_pos <- which.max(netflix_data$Upgrade.Cost)
+
+max_country = netflix_data$Country[max_pos]
+
+max_country
+max_upgrade
+```
+
+# Section 3 (30 points)
+
+A more accurate way of determining "how much" people pay for Netflix around the world would be to compare subscription prices with median incomes for each country.
+We will do that in this section.
+
+## Question 1 (2 points)
+
+Read the data into a variable called `income_data`, from the file, `median-income-by-country.csv`.
+
+```{r}
+income_data <- read.csv("median-income-by-country.csv")
+income_data
+```
+
+## Question 2 (4 points)
+
+How many countries are represented in the `income_data` data frame?
+How does this compare to the number of countries represented in the `netflix_data` data frame?
+**What issues do you think could come up if you try to combine information from the two data frames?**
+
+```{r}
+len_country = length(unique(income_data$country))
+len_country
+```
+
+## Question 3 (8 points)
+
+Create a new column in the `netflix_data` data frame and name it `median_income`.
+It should contain the median income for each country in the `netflix_data` data frame.
+(Some countries from `netflix_data` might not be represented in `income_data`, which makes it impossible to get the median income data for these countries. This is okay, and you can leave these data points as `NA`.) Hint: use the `match` function.
+
+```{r}
+
+match_country = match(netflix_data$Country, income_data$country)
+
+netflix_data$median_income <- income_data$medianIncome[match_country]
+netflix_data
+```
+
+## Question 4 (4 points)
+
+Make a plot of the relationship between median income and basic subscription prices for Netflix.
+Hint: In the `plot` function, use the `rm.na` argument.
+
+```{r}
+medianIn = netflix_data$median_income
+basic_sub = netflix_data$Cost.Per.Month.Basic
+
+plot(medianIn,basic_sub, rm.na=TRUE)
+```
+
+## Question 5 (4 points)
+
+**In general do people in countries with a higher median income have to pay a higher subscription price? Use the plot from the previous question to justify your answer.**
+
+- Based on the plot it is seen that the higher the median price the greater the basic subscription 
+
+## Question 6 (4 points)
+
+Create a new column called `Basic.Cost.Per.Show`, which represents the basic subscription cost *per* TV show.
+Which country has the highest cost per show?
+
+```{r}
+netflix_data$Basic.Cost.Per.Show <- netflix_data$Cost.Per.Month.Basic / netflix_data$Number.of.TV.Shows
+
+max_pershow <- max(netflix_data$Basic.Cost.Per.Show)
+
+max_pos <- which.max(netflix_data$Basic.Cost.Per.Show)
+
+max_country = netflix_data$Country[max_pos]
+
+max_country
+max_pershow
+```
+
+## Question 7 (4 points)
+
+Which country has the highest cost per show, after you take into account median income?
+
+```{r}
+
+netflix_data <- netflix_data[!is.na(netflix_data$Basic.Cost.Per.Show) & !is.na(netflix_data$median_income), ]
+
+netflix_data$Adjusted.Basic.Cost.Per.Show <- netflix_data$Basic.Cost.Per.Show / netflix_data$median_income
+
+max_pershow <- max(netflix_data$Adjusted.Basic.Cost.Per.Show)
+
+max_pos <- which.max(netflix_data$Adjusted.Basic.Cost.Per.Show)
+
+max_country = netflix_data$Country[max_pos]
+
+max_country
+max_pershow
+```
+
+# Essential details
+
+### Deadline and submission
+
+-   The deadline to submit Homework 1 is **11:00pm on Friday, Feb 7th, 2025.** This is a individual assignment.
+
+-   Submit your work by uploading your RMD and HTML/PDF files through D2L.
+    Kindly **double check your submission to note whether the everything is displayed in the uploaded version of the output in D2L or not.** If submitting HTML outputs, please zip the .rmd and html files for submission.
+
+-   Please enable the **`echo=TRUE`** option in your code chunks and name each code chunk.
+
+-   **Late work will not be accepted except under certain extraordinary circumstances.**
+
+### Help
+
+-   If you are trying to get help on a code error, explain your error in detail.
+
+-   Feel free to visit us in during our virtual office hours or make an appointment.
+
+-   Communicate with your classmates, but do not share snippets of code.
+
+-   Start the assignment early.
+    **If you wait until the last minute to start and try to ask questions the night the assignment is due, we cannot guarantee a timely response.**
+
+### Academic integrity
+
+This is an individual assignment. You may discuss ideas, how to debug code, and how to approach a problem with your classmates.
+You may not copy-and-paste another's code from this class or copy answers directly from an AI tool (example: ChatGPT).
+As a reminder, below is the policy on sharing and using other's code.
+
+> Similar reproducible examples (reprex) exist online that will help you answer many of the questions posed on group assignments, and homework assignments.
+> Use of these resources is allowed unless it is written explicitly on the assignment.
+> While you may use AI tools to help debug code or understand a topic, you may not use it to answer assignment questions for you. 
+> You must ALWAYS cite any code you copy or use as inspiration.
+> Copied code without citation is plagiarism and will result in a 0 for the assignment.
+
+### Grading
+
+You must use R Markdown.
+Formatting is at your discretion but is graded.
+Use the in-class assignments and resources available online for inspiration.
+Another useful resource for R Markdown formatting is available at: <https://holtzy.github.io/Pimp-my-rmd/>
+
+| **Topic**                            |  **Points** |
+|--------------------------------------|------------:|
+| Section 1                            |          30 |
+| Section 2                            |          30 |
+| Section 3                            |          30 |
+| Code style and R Markdown formatting |           5 |
+| Rmd file compilation                 |           5 |
+| ---------                            | ----------: |
+| Total                                |         100 |

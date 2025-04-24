@@ -1,0 +1,396 @@
+---
+title: "K-NN: Predicting wine origin"
+author: "<insert group #>"
+date: "M6 ICA3"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #4C6A92;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #4C6A92;
+  font-weight: bold;
+}
+/* Level 2 header */
+h2 {
+  color: #AD5D5D;
+  font-weight: bold;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #AD5D5D;
+    border-color: #337ab7;
+}
+    
+</style>
+
+```{r setup, include=FALSE}
+# global chunk options
+knitr::opts_chunk$set(echo = TRUE,
+                      error = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA,
+                      fig.width=6, 
+                      fig.height=5)
+# set seed
+set.seed(3212019)
+```
+
+# Introduction
+
+R Programming for Data Science introduced classification through functions in the package `class`. Here you will get introduced to a powerful package: `caret`. 
+
+<i>
+The `caret` package (short for C_lassification A_nd RE_gression T_raining) 
+is a set of functions that attempt to streamline the process for creating 
+predictive models. The package contains tools for
+
+- data splitting
+- preprocessing
+- feature selection
+- model tuning using resampling
+- variable importance estimation
+
+as well as other functionality.
+</i>
+
+To learn more about package `caret` visit the link in the
+[References](#References-link) section.
+
+To get started, load packages `tidyverse`, `caret`, and `gifski`. Install
+any packages with code `install.packages("package_name")`.
+
+```{r packages}
+library(tidyverse)
+library(caret)
+library(gifski)
+```
+
+```{r theme-custom, include=FALSE}
+theme_custom <- function() {
+  theme_bw() +
+  theme(text = element_text(color = "#4C6A92"),
+        axis.title = element_text(size = 16), 
+        title = element_text(size = 20),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.caption = element_text(size = 10))
+}
+```
+
+
+# Data
+
+We will examine data that are the result of a chemical analysis of wines grown in the same region in Italy but derived from three different cultivars. The analysis determined the quantities of 13 constituents found in each of the three types of wines. 
+
+```{r}
+# data url
+wineurl <- paste("https://archive.ics.uci.edu/ml/",
+                 "machine-learning-databases/wine/wine.data", sep = "")
+
+# read in data and set as tibble
+wine <- as_tibble(read.csv(file = 'wine.csv', header = TRUE))
+
+# assign variable names
+# colnames(wine) <- c("origin", "alcohol", "acid", 
+#                        "ash", "alcalinity", "magnesium", 
+#                        "phenols", "flavanoids", "nonflavanoid",
+#                        "proanthocyanins","color.int", "hue",
+#                        "od", "proline")
+
+# change origin to factor
+wine <- wine %>% 
+  mutate(Wine = factor(Wine))
+
+wine
+```
+
+<b>
+Our goal is to apply the K-NN algorithm and evaluate its prediction
+accuracy in using the 13 wine features to predict the wine's origin.
+</b>
+
+
+# Exploratory data analysis
+
+Let's examine how the features are related to `origin`.
+
+```{r gif, animation.hook='gifski', interval=3, cache=TRUE}
+for (i in names(wine)[-1]) {
+  print(
+    wine %>% 
+      #select(origin, i) %>% 
+      ggplot(mapping = aes(x = Wine, y = get(i))) + 
+      geom_boxplot(fill = "#AD5D5D") + 
+      labs(x = "origin", y = i) +
+      theme_custom()
+      )
+}
+```
+
+
+1. Create a scatter plot between `flavanoids` and `phenols`. Have the point
+color and shape reflect the wine origin.
+
+```{r}
+ggplot(wine, aes(x= Flavanoids, y= Phenols, color=Wine, shape=Wine)) +
+  geom_point()
+```
+
+# Preprocessing I
+
+Before we train our classifier it is important to examine the features of our data. The results of this analysis may require further pre-processing and give us insight into what distance metric to use for K-NN.
+
+1. How many wine origins exist for each wine? *Hint: `dplyr::count()`*
+
+```{r}
+origin_count <- wine %>%
+  group_by(Wine) %>% 
+  dplyr::count(Wine)
+
+origin_count
+```
+
+2. Are there any `NA` values in the data?
+
+```{r}
+sum(is.na(wine))
+```
+
+3. What types of variables are the 13 features? Are they all quantitative variables?
+
+```{r}
+glimpse(wine)
+```
+
+<b>
+Answer: ...
+</b>
+
+# Data splitting
+
+Next, we split the `r nrow(wine)` rows of `wine` into a training dataset and a testing dataset. We train our classifier with the training data set and evaluate the prediction accuracy with the testing dataset.
+
+The function `createDataPartition()` from package `caret` can be used to create balanced splits of the data. Thus, the ratio of outcomes will be preserved in the training and testing data-sets. This is important.
+
+The function `createDataPartition(y, p , list = TRUE)` has three main arguments:
+
+- `y`: a vector of your outcomes, `origin` from `wine` in our case
+
+- `p`: proportion of overall data that goes to training, typically use between 0.70 and 0.80
+
+- `list`: should the results be in a list? Generally, we will set this to `FALSE`.
+
+The result of function `createDataPartition()` is a list or matrix of row indices that correspond to the training data. 
+
+1. Use the function `createDataPartition()` to get the row indices that will correspond to the training data-set. Set `list = FALSE`, and choose a split percentage of 70%. Save the result as an object `train.index`.
+   
+```{r}
+
+train.index <- createDataPartition(wine$Wine, p=0.70, list=FALSE)
+
+```
+
+2. Use `train.index` to subset the rows of `wine` to create your training data-set. Save the result as an object named `wine.train`. *Hint: `dplyr::slice()`*
+   
+```{r}
+wine.train <- wine %>% slice(train.index)
+wine.train
+```
+
+3. Use the other indices to subset the rows of `wine` to create your testing data-set. Save the result as an object named `wine.test`. *Hint: `dplyr::slice()`, use a minus sign*
+   
+```{r}
+wine.test  <- wine %>% slice(-train.index)
+wine.test
+```
+
+Max Kuhn details other data splitting functionality at https://topepo.github.io/caret/.
+
+
+# Preprocessing II
+
+K-NN operates on the basis of a distance metric. Therefore, it is helpful if all our features are standardized. The function `preProcess()` from package `caret` will help do this correctly and efficiently. The function performs pre-processing transformations (centering, scaling etc.) that can be estimated from the training data and applied to any data-set with the same variables.
+
+The function `preProcess(x, method = c("center", "scale"))` has two main arguments:
+
+- `x`: a matrix or data frame, in this case `wine`
+
+- `method`: type of processing to be done, to standardize we want to center
+  and scale each feature
+
+The result of the function `preProcess()` is a list. Type `?preProcess` in your console to look at the "Value" section of the help. The function `preProcess()` doesn't actually preprocess the data; we need to use the function `predict()` with the result of function `preProcess()`.
+
+1. Input `wine.train` into the function `preProcess()`, and choose the methods center and scale. Save the result as an object named `train.proc`.
+
+```{r}
+
+train.proc <- preProcess(
+  wine.train, 
+  method = c("center", "scale")  
+)
+```
+
+2. Display `train.proc$mean` and `train.proc$std` to see the mean and standard deviation of each feature.
+   
+```{r}
+# Show the per‐feature means (for centering)
+train.proc$mean
+
+# Show the per‐feature standard deviations (for scaling)
+train.proc$std
+```
+   
+   
+3. To actually obtain standardized features use the function `predict()`. We will save the standardized objects as `train.transformed` and `test.transformed` for the training and testing data-sets, respectively.
+
+```{r eval=FALSE}
+# standardize training
+train.transformed <- predict(train.proc, wine.train)
+
+# standardize testing
+test.transformed <- predict(train.proc, wine.test)
+```
+
+When and how you standardize and when you split the data is one of the most common mistakes. See item 3 in [References](#References-link) for a nice explanation on the correct procedure.
+
+
+# K-NN
+
+The `caret` `train()` function lets us train different algorithms using similar syntax. We can use the function `predict()` to obtain predictions.
+
+Function `train(form, method, data)` has the main arguments we need:
+
+- `form`: a formula relating outcomes to features, in this case we have `origin ~ .`, dot means all features
+
+- `method`: type of method to use, in this case "knn"
+
+- `data`: transformed training data frame, `train.transformed`
+
+The result of the function `train()` is a list. Type `?train` in your console to look at the "Value" section of the help.
+
+1. Use `train()` to train the K-NN classifier. Save the result as an object named `train.knn`.
+
+```{r}
+library(caret)
+
+# train.knn on the standardized training set, predicting "Wine"
+train.knn <- train(
+  Wine ~ .,
+  data       = train.transformed,
+  method     = "knn",
+  tuneLength = 10
+)
+
+train.knn
+```
+
+2. Now, we use `predict()` and function `confusionMatrix()` to evaluate
+   the prediction accuracy.
+   
+```{r eval=FALSE}
+# 1) Predict on the standardized test set
+y.hat <- predict(train.knn, newdata = test.transformed)
+
+# 2) Reference the correct column name "Wine"
+ref   <- test.transformed$Wine
+
+# 3) Make sure both are factors with identical levels
+y.hat <- factor(y.hat, levels = levels(ref))
+ref   <- factor(ref,   levels = levels(ref))
+
+# 4) Compute confusion matrix
+cm <- confusionMatrix(data      = y.hat,
+                      reference = ref)
+
+cm
+```
+
+
+
+# Cross validation
+
+When an algorithm includes a tuning parameter, the function `train()` automatically uses cross validation to decide among a few default values. Recall that K-NN has one tuning parameter, $k$.
+
+To visualize the results of cross validation we can use our object `train.knn` in conjunction with `ggplot()`.
+
+```{r eval = FALSE}
+# plot accuracy for different k
+train.knn %>% 
+  ggplot(highlight = TRUE) +
+  theme_custom()
+```
+
+By default, the cross validation is performed by taking 25 bootstrap samples  comprised of 25% of the observations. Default is to try $k = 5, 7, 9$. We can change these $k$ values using the `tuneGrid` parameter in function `train()`. The grid of values must be supplied by a data frame with the parameternames as columns.
+
+For example,
+
+<br><br>
+```{r eval=FALSE}
+ctrl <- trainControl(method = "boot", number = 25)
+
+set.seed(123)
+knn_results <- train.knn.big.grid$results
+
+# Plot accuracy vs. k
+ggplot(knn_results, aes(x = k, y = Accuracy)) +
+  geom_line() +
+  geom_point(size = 2) +
+  theme_custom() +
+  labs(
+    title = "K-NN Accuracy across Different k Values",
+    x     = "Number of Neighbors (k)",
+    y     = "Accuracy"
+  )
+```
+
+1. What parameter maximized the accuracy for `train.knn`? How about
+   `train.knn.big.grid`? *Hint: `train.knn$bestTune`*
+   
+```{r}
+train.knn$bestTune
+train.knn.big.grid$bestTune
+```
+   
+   
+2. Function `predict()` will always use the $k$ with the highest accuracy. Use
+   `predict()` and `confusionMatrix()` to evaluate the accuracy for
+   `train.knn.big.grid`.
+   
+```{r}
+y2.hat <- predict(train.knn.big.grid, newdata = test.transformed)
+
+# Confusion matrix and overall accuracy
+cm2 <- confusionMatrix(
+  data      = y2.hat,
+  reference = test.transformed$Wine
+)
+cm2
+cm2$overall["Accuracy"]
+```
+
+# References {#References-link}
+
+1. https://topepo.github.io/caret/
+
+2. https://archive.ics.uci.edu/ml/datasets/wine
+
+3. https://sebastianraschka.com/faq/docs/scale-training-test.html
+

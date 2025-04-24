@@ -1,0 +1,1404 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={STT 180 (25SP) Homework 1},
+  pdfauthor={Araynah Dover},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{STT 180 (25SP) Homework 1}
+\author{Araynah Dover}
+\date{Jan 23 - Feb 7, 2025}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{4}
+\tableofcontents
+}
+\textbf{General Instructions:}
+
+\begin{itemize}
+\item
+  This is an individual assignment. You may consult with others as you
+  work on the assignment, but each student should write up a separate
+  set of solutions.
+\item
+  Rather than creating a new Rmd file, just add your solutions to the
+  supplied Rmd file. Submit both the Rmd file and the resulting HTML
+  file to D2L.
+\item
+  Except for questions, or parts of questions, that ask for your
+  commentary, use R in a code chunk to answer the questions.
+\item
+  The code chunk option \textbf{\texttt{echo\ =\ TRUE}} is specified in
+  the setup code chunk at the beginning of the document. Please do not
+  override this in your code chunks.
+\item
+  A solution will lose points if the Rmd file does not compile. If one
+  of your code chunks is causing your Rmd file to not compile, you can
+  use the \texttt{eval\ =\ FALSE} option. Another possibility is to use
+  the \texttt{error\ =\ TRUE} option in the code chunk.
+\item
+  This Homework is due on \textbf{Friday, Feb 7th, 2025, by 11 pm.}
+\end{itemize}
+
+This homework assignment consists of three sections. The first section
+deals with data structures and the second section is a small data
+analysis project. You will use the data wrangling and tidying knowledge
+for this section.
+
+\section{Section 1 (30 points)}\label{section-1-30-points}
+
+This section focuses on some basic manipulations of vectors in R.
+
+\subsection{Question 1 (6 points)}\label{question-1-6-points}
+
+Create three vectors in R: One called \texttt{evennums} which contains
+the even integers from 1 through 12. One called \texttt{charnums} which
+contains character representations of the numbers 4 through 8, namely,
+``4'', ``5'', ``6'', ``7'', ``8''. And one called \texttt{mixed} which
+contains the same values as in \texttt{charnums} but which also contains
+the letters ``x'', ``y'' and ``z''. \textbf{No commentary or
+explanations are necessary.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{evennums }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{12}\NormalTok{)}
+\NormalTok{charnums }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"4"}\NormalTok{,}\StringTok{"5"}\NormalTok{,}\StringTok{"6"}\NormalTok{,}\StringTok{"7"}\NormalTok{,}\StringTok{"8"}\NormalTok{)}
+\NormalTok{mixed }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{12}\NormalTok{,}\StringTok{"x"}\NormalTok{,}\StringTok{"y"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Question 2 (6 points)}\label{question-2-6-points}
+
+Investigate what happens when you try to convert \texttt{evennums} to
+character and to logical. - When converting to a char using the as.char
+method when outputting the list it converted elements to chars and in
+turn the type is also a char - When converting to logical all values
+were converted to true being that the ints are greater than 1, Type is
+logical as well Investigate what happens when you convert
+\texttt{charnums} to numeric. - When converting to numeric tghe output
+was numeric values as well as the type of list Investigate what happens
+when you convert \texttt{mixed} to numeric. - When converting to numeric
+for mixed list we got NA values for the chars and num values for ints,
+the type returned was a double \textbf{Comment on each of these
+conversions.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Converting evennums to char}
+\NormalTok{evennums\_char }\OtherTok{\textless{}{-}} \FunctionTok{as.character}\NormalTok{(evennums)}
+\FunctionTok{print}\NormalTok{(evennums\_char)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "2"  "4"  "6"  "8"  "10" "12"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(evennums\_char)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "character"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Converting evennums to log}
+\NormalTok{evennums\_logical }\OtherTok{\textless{}{-}} \FunctionTok{as.logical}\NormalTok{(evennums)}
+\FunctionTok{print}\NormalTok{(evennums\_logical)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] TRUE TRUE TRUE TRUE TRUE TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(evennums\_logical)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "logical"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Converting charnums to numeric}
+\NormalTok{charnums\_numeric }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(charnums)}
+\FunctionTok{print}\NormalTok{(charnums\_numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 4 5 6 7 8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(charnums\_numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "double"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convert mixed to numeric}
+\NormalTok{mixed\_numeric }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(mixed)}
+\FunctionTok{print}\NormalTok{(mixed\_numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1]  2  4  6  8 10 12 NA NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(mixed\_numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "double"
+\end{verbatim}
+
+\subsection{Question 3 (10 points)}\label{question-3-10-points}
+
+\textbf{No commentary is necessary on this part.}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Show how to extract the second element of \texttt{evennums.}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{even\_second }\OtherTok{\textless{}{-}}\NormalTok{ evennums[}\DecValTok{2}\NormalTok{]}
+\NormalTok{even\_second}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 4
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Show how to extract the last element of \texttt{evennums.} In this
+  case you are NOT allowed to use the fact that \texttt{evennums} has
+  six elements, rather, you must give code which would work no matter
+  how many elements \texttt{evennums} has.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{even\_last }\OtherTok{\textless{}{-}}\NormalTok{ evennums[}\FunctionTok{length}\NormalTok{(evennums)]}
+\NormalTok{even\_last}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 12
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Show how to extract all but the first element of \texttt{evennums.}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{even\_first }\OtherTok{\textless{}{-}}\NormalTok{ evennums[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\NormalTok{even\_first }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1]  4  6  8 10 12
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Show how to extract all but the first two and last two elements of
+  \texttt{evennums}.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{even\_extract }\OtherTok{\textless{}{-}}\NormalTok{ evennums[}\DecValTok{3}\SpecialCharTok{:}\NormalTok{(}\FunctionTok{length}\NormalTok{(evennums)}\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{)]}
+\NormalTok{even\_extract}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 6 8
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Calculate the mean of \texttt{evennums}. Calculate the standard
+  deviation of the \texttt{evennums}.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{mean}\NormalTok{(evennums)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sd}\NormalTok{(evennums)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 3.741657
+\end{verbatim}
+
+\subsection{Question 4 (8 points)}\label{question-4-8-points}
+
+Use the help function to find out more about \texttt{sd} and 'floor`.
+\textbf{What does the function do?} \textbf{What are the arguments?}
+\textbf{Which arguments, if any, are optional?} \textbf{Give one simple
+example using the function.} - \texttt{sd}: Gives standard deviation of
+values in given container, takes a conatiner or range of values and
+defualt na.rm = FALSE which is optional removes missing values -
+\texttt{floor}:Takes a single numeric argument x and returns a numeric
+vector containing the largest integers not greater than the
+corresponding elements of x.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sd}\NormalTok{(}\DecValTok{23}\SpecialCharTok{:}\DecValTok{85}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 18.3303
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{floor}\NormalTok{(}\FloatTok{5.8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 5
+\end{verbatim}
+
+\section{Section 2 (30 points)}\label{section-2-30-points}
+
+The dataset contains information about the prices (in USD) of Netflix
+subscriptions around the world.
+
+\subsection{Setting up the data set}\label{setting-up-the-data-set}
+
+Read in the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{netflix\_data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"Netflix{-}subscription{-}fee{-}Dec{-}2021.csv"}\NormalTok{, }\AttributeTok{header =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Question 1 (4 points)}\label{question-1-4-points}
+
+Using the \texttt{str} function, show how \texttt{netflix\_data}
+structured. \textbf{What are the variable names? What is the data type
+of each variable in the data frame?} - Country.Code, Country,
+Total.Library.Size, Number.of.Tv.Shows, Number, Types range from chars,
+ints doubles
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str}\NormalTok{(netflix\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+'data.frame':   65 obs. of  8 variables:
+ $ Country.Code           : chr  "ar" "au" "at" "be" ...
+ $ Country                : chr  "Argentina" "Australia" "Austria" "Belgium" ...
+ $ Total.Library.Size     : int  4760 6114 5640 4990 4991 4972 6797 6239 4994 4991 ...
+ $ Number.of.TV.Shows     : int  3154 4050 3779 3374 3155 3162 4819 4311 3156 3156 ...
+ $ Number.of.Movies       : int  1606 2064 1861 1616 1836 1810 1978 1928 1838 1835 ...
+ $ Cost.Per.Month.Basic   : num  3.74 7.84 9.03 10.16 7.99 ...
+ $ Cost.Per.Month.Standard: num  6.3 12.1 14.7 15.2 11 ...
+ $ Cost.Per.Month.Premium : num  9.26 16.39 20.32 20.32 13.99 ...
+\end{verbatim}
+
+\subsection{Question 2 (4 points)}\label{question-2-4-points}
+
+Print out the data from the column called \texttt{Cost.Per.Month.Basic}.
+Show the data type of the data in this column.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{per\_month }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Cost.Per.Month.Basic}
+\NormalTok{per\_month}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1]  3.74  7.84  9.03 10.16  7.99  4.61  9.03  7.91  7.07  4.31  8.99  9.03
+[13]  8.83 12.00  7.99  9.03  9.03 10.16  9.03  9.03  9.03  7.99  7.99  8.08
+[25]  7.64  9.03  2.64  8.36  9.03 10.56  9.03  8.73  9.03 12.88  9.03  8.29
+[37]  6.62  9.03  9.03  9.03  8.80  9.94  8.29  6.11  7.35  7.13  9.03  9.03
+[49]  8.13  9.03  9.51  9.03  6.26  8.07  9.03 10.90 12.88  9.74  8.34  1.97
+[61]  5.64  7.91  8.99  8.99  7.99
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(per\_month)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "double"
+\end{verbatim}
+
+\subsection{Question 3 (4 points)}\label{question-3-4-points}
+
+Print out the data from the column called \texttt{Number.of.TV.Shows}.
+Show the data type of the data in this column.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{number\_show }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Number.of.TV.Shows}
+\NormalTok{number\_show}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] 3154 4050 3779 3374 3155 3162 4819 4311 3156 3156 3152 1675 5234 2978 3155
+[16] 4486 2638 3604 3814 4079 3344 3154 3154 2883 4802 4426 3718 2449 4515 3650
+[31] 3545 3619 4479 1712 4490 3565 3158 2473 3806 3779 4003 2955 3155 3155 4154
+[46] 3512 3419 3832 3624 1937 4109 5055 3686 3334 3536 2973 3654 3134 2977 2930
+[61] 3261 4551 3826 3154 3154
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{typeof}\NormalTok{(number\_show)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "integer"
+\end{verbatim}
+
+\subsection{Question 4 (4 points)}\label{question-4-4-points}
+
+Plot the relationship between the number of TV shows available, and the
+cost of a basic subscription.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(number\_show,per\_month)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{STT180-25SP-HW1_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\subsection{Question 5 (4 points)}\label{question-5-4-points}
+
+\textbf{In general does having more TV shows mean paying a higher
+subscription price? Use the plot from the previous question to justify
+your answer.}
+
+\subsection{Question 6 (6 points)}\label{question-6-6-points}
+
+Create a new column in \texttt{netflix\_data} called
+\texttt{Upgrade.Cost}, and set it equal to the difference between paying
+for Basic and paying for Premium. It should represent the cost of
+upgrading you Netflix subscription from Basic to Premium.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{per\_month\_basic }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Cost.Per.Month.Basic}
+\NormalTok{per\_month\_premium }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Cost.Per.Month.Premium}
+
+\NormalTok{netflix\_data}\SpecialCharTok{$}\NormalTok{Upgrade.Cost }\OtherTok{=}\NormalTok{ per\_month\_basic }\SpecialCharTok{/}\NormalTok{ per\_month\_premium}
+\NormalTok{netflix\_data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   Country.Code        Country Total.Library.Size Number.of.TV.Shows
+1            ar      Argentina               4760               3154
+2            au      Australia               6114               4050
+3            at        Austria               5640               3779
+4            be        Belgium               4990               3374
+5            bo        Bolivia               4991               3155
+6            br         Brazil               4972               3162
+7            bg       Bulgaria               6797               4819
+8            ca         Canada               6239               4311
+9            cl          Chile               4994               3156
+10           co       Colombia               4991               3156
+11           cr     Costa Rica               4988               3152
+12           hr        Croatia               2274               1675
+13           cz        Czechia               7325               5234
+14           dk        Denmark               4558               2978
+15           ec        Ecuador               4992               3155
+16           ee        Estonia               6456               4486
+17           fi        Finland               4045               2638
+18           fr         France               5445               3604
+19           de        Germany               5668               3814
+20           gi      Gibraltar               6167               4079
+21           gr         Greece               4772               3344
+22           gt      Guatemala               4767               3154
+23           hn       Honduras               4989               3154
+24           hk      Hong Kong               4746               2883
+25           hu        Hungary               6884               4802
+26           is        Iceland               6387               4426
+27           in          India               5843               3718
+28           id      Indonesia               3887               2449
+29           ie        Ireland               6486               4515
+30           il         Israel               5713               3650
+31           it          Italy               5183               3545
+32           jp          Japan               5475               3619
+33           lv         Latvia               6450               4479
+34           li  Liechtenstein               3048               1712
+35           lt      Lithuania               6462               4490
+36           my       Malaysia               5952               3565
+37           mx         Mexico               4993               3158
+38           md        Moldova               3937               2473
+39           mc         Monaco               5804               3806
+40           nl    Netherlands               5376               3779
+41           nz    New Zealand               6084               4003
+42           no         Norway               4528               2955
+43           py       Paraguay               4797               3155
+44           pe           Peru               4986               3155
+45           ph    Philippines               6362               4154
+46           pl         Poland               5109               3512
+47           pt       Portugal               5047               3419
+48           ro        Romania               5303               3832
+49           ru         Russia               5711               3624
+50           sm     San Marino               2310               1937
+51           sg      Singapore               6303               4109
+52           sk       Slovakia               7035               5055
+53           za   South Africa               5736               3686
+54           kr    South Korea               5195               3334
+55           es          Spain               5229               3536
+56           se         Sweden               4361               2973
+57           ch    Switzerland               5506               3654
+58           tw         Taiwan               5105               3134
+59           th       Thailand               4948               2977
+60           tr         Turkey               4639               2930
+61           ua        Ukraine               5336               3261
+62           gb United Kingdom               6643               4551
+63           us  United States               5818               3826
+64           uy        Uruguay               4989               3154
+65           ve      Venezuela               4797               3154
+   Number.of.Movies Cost.Per.Month.Basic Cost.Per.Month.Standard
+1              1606                 3.74                    6.30
+2              2064                 7.84                   12.12
+3              1861                 9.03                   14.67
+4              1616                10.16                   15.24
+5              1836                 7.99                   10.99
+6              1810                 4.61                    7.11
+7              1978                 9.03                   11.29
+8              1928                 7.91                   11.87
+9              1838                 7.07                    9.91
+10             1835                 4.31                    6.86
+11             1836                 8.99                   12.99
+12              599                 9.03                   11.29
+13             2091                 8.83                   11.49
+14             1580                12.00                   15.04
+15             1837                 7.99                   10.99
+16             1970                 9.03                   11.29
+17             1407                 9.03                   13.54
+18             1841                10.16                   15.24
+19             1854                 9.03                   14.67
+20             2088                 9.03                   14.67
+21             1428                 9.03                   12.42
+22             1613                 7.99                   10.99
+23             1835                 7.99                   10.99
+24             1863                 8.08                   10.00
+25             2082                 7.64                   10.71
+26             1961                 9.03                   14.67
+27             2125                 2.64                    6.61
+28             1438                 8.36                   10.66
+29             1971                 9.03                   14.67
+30             2063                10.56                   15.05
+31             1638                 9.03                   14.67
+32             1856                 8.73                   13.13
+33             1971                 9.03                   11.29
+34             1336                12.88                   20.46
+35             1972                 9.03                   11.29
+36             2387                 8.29                   10.65
+37             1835                 6.62                   10.43
+38             1464                 9.03                   11.29
+39             1998                 9.03                   13.54
+40             1597                 9.03                   13.54
+41             2081                 8.80                   12.53
+42             1573                 9.94                   12.17
+43             1642                 8.29                   11.49
+44             1831                 6.11                    8.56
+45             2208                 7.35                    9.14
+46             1597                 7.13                   10.58
+47             1628                 9.03                   13.54
+48             1471                 9.03                   11.29
+49             2087                 8.13                   10.84
+50              373                 9.03                   14.67
+51             2194                 9.51                   12.81
+52             1980                 9.03                   11.29
+53             2050                 6.26                   10.05
+54             1861                 8.07                   11.47
+55             1693                 9.03                   14.67
+56             1388                10.90                   14.20
+57             1852                12.88                   20.46
+58             1971                 9.74                   11.90
+59             1971                 8.34                   10.43
+60             1709                 1.97                    3.00
+61             2075                 5.64                    8.46
+62             2092                 7.91                   13.20
+63             1992                 8.99                   13.99
+64             1835                 8.99                   12.99
+65             1643                 7.99                   10.99
+   Cost.Per.Month.Premium Upgrade.Cost
+1                    9.26    0.4038877
+2                   16.39    0.4783405
+3                   20.32    0.4443898
+4                   20.32    0.5000000
+5                   13.99    0.5711222
+6                    9.96    0.4628514
+7                   13.54    0.6669129
+8                   15.03    0.5262808
+9                   12.74    0.5549451
+10                   9.93    0.4340383
+11                  15.99    0.5622264
+12                  13.54    0.6669129
+13                  14.15    0.6240283
+14                  19.60    0.6122449
+15                  13.99    0.5711222
+16                  13.54    0.6669129
+17                  18.06    0.5000000
+18                  20.32    0.5000000
+19                  20.32    0.4443898
+20                  20.32    0.4443898
+21                  15.80    0.5715190
+22                  13.99    0.5711222
+23                  13.99    0.5711222
+24                  11.93    0.6772842
+25                  13.78    0.5544267
+26                  20.32    0.4443898
+27                   8.60    0.3069767
+28                  12.96    0.6450617
+29                  20.32    0.4443898
+30                  19.54    0.5404299
+31                  20.32    0.4443898
+32                  17.45    0.5002865
+33                  13.54    0.6669129
+34                  26.96    0.4777448
+35                  13.54    0.6669129
+36                  13.02    0.6367127
+37                  14.24    0.4648876
+38                  13.54    0.6669129
+39                  18.06    0.5000000
+40                  18.06    0.5000000
+41                  16.94    0.5194805
+42                  17.75    0.5600000
+43                  14.69    0.5643295
+44                  11.01    0.5549500
+45                  10.93    0.6724611
+46                  14.76    0.4830623
+47                  18.06    0.5000000
+48                  13.54    0.6669129
+49                  13.56    0.5995575
+50                  20.32    0.4443898
+51                  16.11    0.5903166
+52                  13.54    0.6669129
+53                  12.58    0.4976153
+54                  14.45    0.5584775
+55                  20.32    0.4443898
+56                  19.70    0.5532995
+57                  26.96    0.4777448
+58                  14.07    0.6922530
+59                  12.52    0.6661342
+60                   4.02    0.4900498
+61                  11.29    0.4995571
+62                  18.48    0.4280303
+63                  17.99    0.4997221
+64                  15.99    0.5622264
+65                  13.99    0.5711222
+\end{verbatim}
+
+\subsection{Question 7 (4 points)}\label{question-7-4-points}
+
+Which country has the highest upgrade cost, according to your new
+column? Show how you found you answer using code.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{max\_upgrade }\OtherTok{\textless{}{-}} \FunctionTok{max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Upgrade.Cost)}
+
+\NormalTok{max\_pos }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Upgrade.Cost)}
+
+\NormalTok{max\_country }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Country[max\_pos]}
+
+\NormalTok{max\_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "Taiwan"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{max\_upgrade}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.692253
+\end{verbatim}
+
+\section{Section 3 (30 points)}\label{section-3-30-points}
+
+A more accurate way of determining ``how much'' people pay for Netflix
+around the world would be to compare subscription prices with median
+incomes for each country. We will do that in this section.
+
+\subsection{Question 1 (2 points)}\label{question-1-2-points}
+
+Read the data into a variable called \texttt{income\_data}, from the
+file, \texttt{median-income-by-country.csv}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{income\_data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"median{-}income{-}by{-}country.csv"}\NormalTok{)}
+\NormalTok{income\_data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                     country medianIncome meanIncome gdpPerCapitaPPP    pop2021
+1                 Luxembourg        26321      31376          124590     634814
+2       United Arab Emirates        24292      27017           70089    9991089
+3                     Norway        22684      25272           70005    5465630
+4                Switzerland        21490      25787           72376    8715494
+5              United States        19306      25332           65297  332915073
+6                     Canada        18652      22042           51668   38067903
+7                    Austria        18405      20718           60418    9043070
+8                     Sweden        17625      20193           56632   10160169
+9                    Denmark        17432      20304           62089    5813298
+10               Netherlands        17154      19690           61285   17173099
+11                 Australia        17076      21329           53381   25788215
+12                   Iceland        17017      19300           60132     343353
+13                   Germany        16845      19730           57530   83900473
+14                    France        16372      19409           50992   65426179
+15                   Finland        16332      18742           53171    5548360
+16                   Belgium        16157      17917           56348   11632326
+17            United Kingdom        14793      18133           49931   68207116
+18                     Malta        14543      16509           47578     442784
+19                   Ireland        14520      17938           89683    4982907
+20                     Japan        14255      17095           43593  126050804
+21                    Taiwan        13605      16355               0   23855010
+22                     Italy        13170      15547           45722   60367477
+23                    Cyprus        13053      15663           41254    1215584
+24               South Korea        12507      14316           44011   51305186
+25                  Slovenia        11878      13056           42431    2078724
+26                     Spain        11786      13822           43495   46745216
+27                    Israel        10866      13271           42897    8789774
+28                   Estonia        10651      12540           39986    1325185
+29            Czech Republic        10046      11394           44295   10724555
+30                    Poland         8885      10155           35165   37797005
+31                  Portugal         8439      10316           37918   10167925
+32                 Lithuania         8267      10479           40016    2689862
+33                  Slovakia         7991       8408           33515    5460721
+34                    Latvia         7971       9727           33020    1866942
+35                   Lebanon         7712       9091           15195    6769146
+36                   Hungary         7684       8613           34966    9634164
+37                   Uruguay         7533       9888           22515    3485151
+38                  Malaysia         7512      10200           29619   32776194
+39                   Croatia         7196       8008           31130    4081651
+40                    Greece         6936       8131           32506   10370744
+41                   Belarus         6507       7359           19997    9442862
+42                     Chile         6293       9304           27002   19212361
+43                    Panama         6254       9453           32850    4381579
+44    Bosnia and Herzegovina         5925       7131           16288    3263466
+45                  Bulgaria         5696       7474           25312    6896663
+46                    Russia         5504       7275           29181  145912025
+47                Costa Rica         5457       8440           21737    5139052
+48                  Maldives         5409       6435           20395     543617
+49                 Argentina         5319       6935               0   45605826
+50                Seychelles         5314       8044           30516      98908
+51                    Turkey         5251       7267           28133   85042738
+52                   Romania         5206       5949           33339   19127774
+53                    Brazil         4559       7654           15299  213993437
+54               Saint Lucia         4519       6946           16132     184400
+55                   Ukraine         4434       5010           13341   43466819
+56                    Serbia         4416       5252           19495    8697550
+57                      Iran         4360       5924           12937   85028759
+58                  Thailand         4356       5670           19276   69950850
+59                  Paraguay         4334       6373           13246    7219638
+60                Montenegro         4193       5123           24035     628053
+61        Dominican Republic         4060       5873           19227   10953703
+62           North Macedonia         3857       4279           18107    2082658
+63                 Mauritius         3832       4969           23882    1273433
+64                      Peru         3678       4977           13416   33359418
+65                Kazakhstan         3661       4313           27517   18994962
+66                   Bolivia         3631       4787            9110   11832940
+67                   Ecuador         3525       5046           11878   17888475
+68                   Tunisia         3366       4076           11231   11935766
+69                    Mexico         3315       4929           20944  130262216
+70                  Colombia         3259       5201           16012   51265844
+71                Azerbaijan         3193       3851           15041   10223342
+72                    Jordan         3185       4025           10517   10269021
+73                   Vietnam         3149       3881            8397   98168833
+74                   Moldova         3133       3590           13626    4024019
+75               El Salvador         3095       3989            9164    6518499
+76                   Jamaica         2899       4429           10193    2973463
+77       Trinidad and Tobago         2868       3711           27334    1403375
+78                  Mongolia         2800       3409           12861    3329289
+79                     Tonga         2782       3677            6665     106760
+80                     Gabon         2779       3544           15611    2278825
+81                   Morocco         2716       3721            7826   37344795
+82                 Venezuela         2710       3741           17527   28704954
+83                 Nicaragua         2697       3913            5646    6702385
+84                   Algeria         2612       2996           12019   44616624
+85                   Albania         2578       3141           14648    2872933
+86                     Samoa         2537       3418            6795     200149
+87                      Fiji         2460       3261           14289     902906
+88                    Bhutan         2446       3189           12355     779898
+89                 Sri Lanka         2277       3162           13656   21497310
+90                   Georgia         2273       2814           15655    3979765
+91                   Armenia         2216       2810           14257    2968127
+92                    Tuvalu         2099       2802            4470      11931
+93                 Guatemala         2036       3103            9019   18249860
+94                    Guyana         2003       2729           13661     790326
+95                     Syria         1996       2606               0   18275702
+96                Tajikistan         1994       2437            3529    9749627
+97                   Namibia         1962       4023           10063    2587344
+98                  Honduras         1959       3109            5981   10062991
+99                      Iraq         1951       2293           11362   41179350
+100                   Belize         1927       3246            7314     404914
+101                  Myanmar         1909       2296            5369   54806012
+102               Kyrgyzstan         1892       2235            5485    6628356
+103                    Ghana         1779       2422            5652   31732129
+104               Mauritania         1760       2094            5427    4775119
+105                 Suriname         1659       2593           17256     591800
+106             South Africa         1624       4081           13034   60041994
+107                 Botswana         1596       2907           18552    2397241
+108              Philippines         1581       2199            9302  111046913
+109                 Kiribati         1489       1858            2372     121392
+110                    Egypt         1485       1847               0  104258327
+111               Micronesia         1413       1858            3547     116254
+112                 Djibouti         1403       1869            5779    1002187
+113                  Comoros         1401       2050            3194     888451
+114                 Pakistan         1399       1797            4898  225199937
+115                   Gambia         1383       1784            2321    2486945
+116                  Vanuatu         1379       1781            3292     314464
+117                    Sudan         1277       1592            4122   44909353
+118                 Cameroon         1245       1841            3803   27224265
+119                    Haiti         1162       1540            3034   11541685
+120                  Lesotho         1157       1659            2824    2159079
+121                    Nepal         1155       1428            3567   29674920
+122                    Yemen         1150       1503            3688   30490640
+123               Bangladesh         1131       1414            4964  166303498
+124                 Eswatini         1097       2091            9003    1172362
+125                     Laos         1065       1389            8172    7379358
+126          Solomon Islands         1028       1333            2780     703996
+127              Ivory Coast          987       1358            5443   27053629
+128              Timor-Leste          970       1147            3709    1343873
+129                 Zimbabwe          932       1429            2961   15092171
+130                 Ethiopia          907       1107            2319  117876227
+131    Sao Tome and Principe          901       1620            4145     223368
+132    Republic of the Congo          892       1375            3835    5657013
+133                     Chad          880       1182            1649   16914985
+134         Papua New Guinea          876       1162            4547    9119010
+135                    Kenya          874       1197            4521   54985698
+136                  Senegal          844       1137            3545   17196301
+137                   Guinea          843       1036            2675   13497244
+138                  Nigeria          825       1021            5362  211400708
+139                   Uganda          804       1166            2284   47123531
+140              South Sudan          793       1121            1234   11381378
+141             Sierra Leone          765       1004            1794    8141343
+142                  Liberia          753        945            1491    5180203
+143             Burkina Faso          748       1002            2274   21497096
+144                    Niger          738        937            1278   25130817
+145             Turkmenistan          706        963           15206    6117924
+146                 Tanzania          702        992            2770   61498437
+147                    Benin          699        989            3432   12451040
+148                     Mali          689        861            2424   20855735
+149                     Togo          683        964            1667    8478250
+150                   Angola          665       1066            6965   33933610
+151                   Rwanda          621        925            2325   13276513
+152               Uzbekistan          591        752            7308   33935763
+153                   Zambia          545       1045            3624   18920651
+154               Mozambique          529        947            1338   32163047
+155 Central African Republic          491        891             986    4919981
+156            Guinea-Bissau          486        797            2077    2015494
+157                   Malawi          484        733            1106   19647684
+158                  Burundi          475        640             784   12255433
+159               Madagascar          398        567            1719   28427328
+160                 DR Congo          395        548            1146   92377993
+161                    India           NA       1314            6996 1393409038
+162                    China           NA       4246           16829 1444216107
+\end{verbatim}
+
+\subsection{Question 2 (4 points)}\label{question-2-4-points-1}
+
+How many countries are represented in the \texttt{income\_data} data
+frame? How does this compare to the number of countries represented in
+the \texttt{netflix\_data} data frame? \textbf{What issues do you think
+could come up if you try to combine information from the two data
+frames?}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{len\_country }\OtherTok{=} \FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(income\_data}\SpecialCharTok{$}\NormalTok{country))}
+\NormalTok{len\_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 162
+\end{verbatim}
+
+\subsection{Question 3 (8 points)}\label{question-3-8-points}
+
+Create a new column in the \texttt{netflix\_data} data frame and name it
+\texttt{median\_income}. It should contain the median income for each
+country in the \texttt{netflix\_data} data frame. (Some countries from
+\texttt{netflix\_data} might not be represented in
+\texttt{income\_data}, which makes it impossible to get the median
+income data for these countries. This is okay, and you can leave these
+data points as \texttt{NA}.) Hint: use the \texttt{match} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{match\_country }\OtherTok{=} \FunctionTok{match}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Country, income\_data}\SpecialCharTok{$}\NormalTok{country)}
+
+\NormalTok{netflix\_data}\SpecialCharTok{$}\NormalTok{median\_income }\OtherTok{\textless{}{-}}\NormalTok{ income\_data}\SpecialCharTok{$}\NormalTok{medianIncome[match\_country]}
+\NormalTok{netflix\_data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   Country.Code        Country Total.Library.Size Number.of.TV.Shows
+1            ar      Argentina               4760               3154
+2            au      Australia               6114               4050
+3            at        Austria               5640               3779
+4            be        Belgium               4990               3374
+5            bo        Bolivia               4991               3155
+6            br         Brazil               4972               3162
+7            bg       Bulgaria               6797               4819
+8            ca         Canada               6239               4311
+9            cl          Chile               4994               3156
+10           co       Colombia               4991               3156
+11           cr     Costa Rica               4988               3152
+12           hr        Croatia               2274               1675
+13           cz        Czechia               7325               5234
+14           dk        Denmark               4558               2978
+15           ec        Ecuador               4992               3155
+16           ee        Estonia               6456               4486
+17           fi        Finland               4045               2638
+18           fr         France               5445               3604
+19           de        Germany               5668               3814
+20           gi      Gibraltar               6167               4079
+21           gr         Greece               4772               3344
+22           gt      Guatemala               4767               3154
+23           hn       Honduras               4989               3154
+24           hk      Hong Kong               4746               2883
+25           hu        Hungary               6884               4802
+26           is        Iceland               6387               4426
+27           in          India               5843               3718
+28           id      Indonesia               3887               2449
+29           ie        Ireland               6486               4515
+30           il         Israel               5713               3650
+31           it          Italy               5183               3545
+32           jp          Japan               5475               3619
+33           lv         Latvia               6450               4479
+34           li  Liechtenstein               3048               1712
+35           lt      Lithuania               6462               4490
+36           my       Malaysia               5952               3565
+37           mx         Mexico               4993               3158
+38           md        Moldova               3937               2473
+39           mc         Monaco               5804               3806
+40           nl    Netherlands               5376               3779
+41           nz    New Zealand               6084               4003
+42           no         Norway               4528               2955
+43           py       Paraguay               4797               3155
+44           pe           Peru               4986               3155
+45           ph    Philippines               6362               4154
+46           pl         Poland               5109               3512
+47           pt       Portugal               5047               3419
+48           ro        Romania               5303               3832
+49           ru         Russia               5711               3624
+50           sm     San Marino               2310               1937
+51           sg      Singapore               6303               4109
+52           sk       Slovakia               7035               5055
+53           za   South Africa               5736               3686
+54           kr    South Korea               5195               3334
+55           es          Spain               5229               3536
+56           se         Sweden               4361               2973
+57           ch    Switzerland               5506               3654
+58           tw         Taiwan               5105               3134
+59           th       Thailand               4948               2977
+60           tr         Turkey               4639               2930
+61           ua        Ukraine               5336               3261
+62           gb United Kingdom               6643               4551
+63           us  United States               5818               3826
+64           uy        Uruguay               4989               3154
+65           ve      Venezuela               4797               3154
+   Number.of.Movies Cost.Per.Month.Basic Cost.Per.Month.Standard
+1              1606                 3.74                    6.30
+2              2064                 7.84                   12.12
+3              1861                 9.03                   14.67
+4              1616                10.16                   15.24
+5              1836                 7.99                   10.99
+6              1810                 4.61                    7.11
+7              1978                 9.03                   11.29
+8              1928                 7.91                   11.87
+9              1838                 7.07                    9.91
+10             1835                 4.31                    6.86
+11             1836                 8.99                   12.99
+12              599                 9.03                   11.29
+13             2091                 8.83                   11.49
+14             1580                12.00                   15.04
+15             1837                 7.99                   10.99
+16             1970                 9.03                   11.29
+17             1407                 9.03                   13.54
+18             1841                10.16                   15.24
+19             1854                 9.03                   14.67
+20             2088                 9.03                   14.67
+21             1428                 9.03                   12.42
+22             1613                 7.99                   10.99
+23             1835                 7.99                   10.99
+24             1863                 8.08                   10.00
+25             2082                 7.64                   10.71
+26             1961                 9.03                   14.67
+27             2125                 2.64                    6.61
+28             1438                 8.36                   10.66
+29             1971                 9.03                   14.67
+30             2063                10.56                   15.05
+31             1638                 9.03                   14.67
+32             1856                 8.73                   13.13
+33             1971                 9.03                   11.29
+34             1336                12.88                   20.46
+35             1972                 9.03                   11.29
+36             2387                 8.29                   10.65
+37             1835                 6.62                   10.43
+38             1464                 9.03                   11.29
+39             1998                 9.03                   13.54
+40             1597                 9.03                   13.54
+41             2081                 8.80                   12.53
+42             1573                 9.94                   12.17
+43             1642                 8.29                   11.49
+44             1831                 6.11                    8.56
+45             2208                 7.35                    9.14
+46             1597                 7.13                   10.58
+47             1628                 9.03                   13.54
+48             1471                 9.03                   11.29
+49             2087                 8.13                   10.84
+50              373                 9.03                   14.67
+51             2194                 9.51                   12.81
+52             1980                 9.03                   11.29
+53             2050                 6.26                   10.05
+54             1861                 8.07                   11.47
+55             1693                 9.03                   14.67
+56             1388                10.90                   14.20
+57             1852                12.88                   20.46
+58             1971                 9.74                   11.90
+59             1971                 8.34                   10.43
+60             1709                 1.97                    3.00
+61             2075                 5.64                    8.46
+62             2092                 7.91                   13.20
+63             1992                 8.99                   13.99
+64             1835                 8.99                   12.99
+65             1643                 7.99                   10.99
+   Cost.Per.Month.Premium Upgrade.Cost median_income
+1                    9.26    0.4038877          5319
+2                   16.39    0.4783405         17076
+3                   20.32    0.4443898         18405
+4                   20.32    0.5000000         16157
+5                   13.99    0.5711222          3631
+6                    9.96    0.4628514          4559
+7                   13.54    0.6669129          5696
+8                   15.03    0.5262808         18652
+9                   12.74    0.5549451          6293
+10                   9.93    0.4340383          3259
+11                  15.99    0.5622264          5457
+12                  13.54    0.6669129          7196
+13                  14.15    0.6240283            NA
+14                  19.60    0.6122449         17432
+15                  13.99    0.5711222          3525
+16                  13.54    0.6669129         10651
+17                  18.06    0.5000000         16332
+18                  20.32    0.5000000         16372
+19                  20.32    0.4443898         16845
+20                  20.32    0.4443898            NA
+21                  15.80    0.5715190          6936
+22                  13.99    0.5711222          2036
+23                  13.99    0.5711222          1959
+24                  11.93    0.6772842            NA
+25                  13.78    0.5544267          7684
+26                  20.32    0.4443898         17017
+27                   8.60    0.3069767            NA
+28                  12.96    0.6450617            NA
+29                  20.32    0.4443898         14520
+30                  19.54    0.5404299         10866
+31                  20.32    0.4443898         13170
+32                  17.45    0.5002865         14255
+33                  13.54    0.6669129          7971
+34                  26.96    0.4777448            NA
+35                  13.54    0.6669129          8267
+36                  13.02    0.6367127          7512
+37                  14.24    0.4648876          3315
+38                  13.54    0.6669129          3133
+39                  18.06    0.5000000            NA
+40                  18.06    0.5000000         17154
+41                  16.94    0.5194805            NA
+42                  17.75    0.5600000         22684
+43                  14.69    0.5643295          4334
+44                  11.01    0.5549500          3678
+45                  10.93    0.6724611          1581
+46                  14.76    0.4830623          8885
+47                  18.06    0.5000000          8439
+48                  13.54    0.6669129          5206
+49                  13.56    0.5995575          5504
+50                  20.32    0.4443898            NA
+51                  16.11    0.5903166            NA
+52                  13.54    0.6669129          7991
+53                  12.58    0.4976153          1624
+54                  14.45    0.5584775         12507
+55                  20.32    0.4443898         11786
+56                  19.70    0.5532995         17625
+57                  26.96    0.4777448         21490
+58                  14.07    0.6922530         13605
+59                  12.52    0.6661342          4356
+60                   4.02    0.4900498          5251
+61                  11.29    0.4995571          4434
+62                  18.48    0.4280303         14793
+63                  17.99    0.4997221         19306
+64                  15.99    0.5622264          7533
+65                  13.99    0.5711222          2710
+\end{verbatim}
+
+\subsection{Question 4 (4 points)}\label{question-4-4-points-1}
+
+Make a plot of the relationship between median income and basic
+subscription prices for Netflix. Hint: In the \texttt{plot} function,
+use the \texttt{rm.na} argument.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{medianIn }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{median\_income}
+\NormalTok{basic\_sub }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Cost.Per.Month.Basic}
+
+\FunctionTok{plot}\NormalTok{(medianIn,basic\_sub, }\AttributeTok{rm.na=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{STT180-25SP-HW1_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\subsection{Question 5 (4 points)}\label{question-5-4-points-1}
+
+\textbf{In general do people in countries with a higher median income
+have to pay a higher subscription price? Use the plot from the previous
+question to justify your answer.}
+
+\begin{itemize}
+\tightlist
+\item
+  Based on the plot it is seen that the higher the median price the
+  greater the basic subscription
+\end{itemize}
+
+\subsection{Question 6 (4 points)}\label{question-6-4-points}
+
+Create a new column called \texttt{Basic.Cost.Per.Show}, which
+represents the basic subscription cost \emph{per} TV show. Which country
+has the highest cost per show?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{netflix\_data}\SpecialCharTok{$}\NormalTok{Basic.Cost.Per.Show }\OtherTok{\textless{}{-}}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Cost.Per.Month.Basic }\SpecialCharTok{/}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Number.of.TV.Shows}
+
+\NormalTok{max\_pershow }\OtherTok{\textless{}{-}} \FunctionTok{max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Basic.Cost.Per.Show)}
+
+\NormalTok{max\_pos }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Basic.Cost.Per.Show)}
+
+\NormalTok{max\_country }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Country[max\_pos]}
+
+\NormalTok{max\_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "Liechtenstein"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{max\_pershow}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.007523364
+\end{verbatim}
+
+\subsection{Question 7 (4 points)}\label{question-7-4-points-1}
+
+Which country has the highest cost per show, after you take into account
+median income?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{netflix\_data }\OtherTok{\textless{}{-}}\NormalTok{ netflix\_data[}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Basic.Cost.Per.Show) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{median\_income), ]}
+
+\NormalTok{netflix\_data}\SpecialCharTok{$}\NormalTok{Adjusted.Basic.Cost.Per.Show }\OtherTok{\textless{}{-}}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Basic.Cost.Per.Show }\SpecialCharTok{/}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{median\_income}
+
+\NormalTok{max\_pershow }\OtherTok{\textless{}{-}} \FunctionTok{max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Adjusted.Basic.Cost.Per.Show)}
+
+\NormalTok{max\_pos }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(netflix\_data}\SpecialCharTok{$}\NormalTok{Adjusted.Basic.Cost.Per.Show)}
+
+\NormalTok{max\_country }\OtherTok{=}\NormalTok{ netflix\_data}\SpecialCharTok{$}\NormalTok{Country[max\_pos]}
+
+\NormalTok{max\_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "Honduras"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{max\_pershow}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 1.293155e-06
+\end{verbatim}
+
+\section{Essential details}\label{essential-details}
+
+\subsubsection{Deadline and submission}\label{deadline-and-submission}
+
+\begin{itemize}
+\item
+  The deadline to submit Homework 1 is \textbf{11:00pm on Friday, Feb
+  7th, 2025.} This is a individual assignment.
+\item
+  Submit your work by uploading your RMD and HTML/PDF files through D2L.
+  Kindly \textbf{double check your submission to note whether the
+  everything is displayed in the uploaded version of the output in D2L
+  or not.} If submitting HTML outputs, please zip the .rmd and html
+  files for submission.
+\item
+  Please enable the \textbf{\texttt{echo=TRUE}} option in your code
+  chunks and name each code chunk.
+\item
+  \textbf{Late work will not be accepted except under certain
+  extraordinary circumstances.}
+\end{itemize}
+
+\subsubsection{Help}\label{help}
+
+\begin{itemize}
+\item
+  If you are trying to get help on a code error, explain your error in
+  detail.
+\item
+  Feel free to visit us in during our virtual office hours or make an
+  appointment.
+\item
+  Communicate with your classmates, but do not share snippets of code.
+\item
+  Start the assignment early. \textbf{If you wait until the last minute
+  to start and try to ask questions the night the assignment is due, we
+  cannot guarantee a timely response.}
+\end{itemize}
+
+\subsubsection{Academic integrity}\label{academic-integrity}
+
+This is an individual assignment. You may discuss ideas, how to debug
+code, and how to approach a problem with your classmates. You may not
+copy-and-paste another's code from this class or copy answers directly
+from an AI tool (example: ChatGPT). As a reminder, below is the policy
+on sharing and using other's code.
+
+\begin{quote}
+Similar reproducible examples (reprex) exist online that will help you
+answer many of the questions posed on group assignments, and homework
+assignments. Use of these resources is allowed unless it is written
+explicitly on the assignment. While you may use AI tools to help debug
+code or understand a topic, you may not use it to answer assignment
+questions for you. You must ALWAYS cite any code you copy or use as
+inspiration. Copied code without citation is plagiarism and will result
+in a 0 for the assignment.
+\end{quote}
+
+\subsubsection{Grading}\label{grading}
+
+You must use R Markdown. Formatting is at your discretion but is graded.
+Use the in-class assignments and resources available online for
+inspiration. Another useful resource for R Markdown formatting is
+available at: \url{https://holtzy.github.io/Pimp-my-rmd/}
+
+\begin{longtable}[]{@{}lr@{}}
+\toprule\noalign{}
+\textbf{Topic} & \textbf{Points} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Section 1 & 30 \\
+Section 2 & 30 \\
+Section 3 & 30 \\
+Code style and R Markdown formatting & 5 \\
+Rmd file compilation & 5 \\
+--------- & ----------: \\
+Total & 100 \\
+\end{longtable}
+
+\end{document}

@@ -1,0 +1,341 @@
+---
+title: "General linear regression: course evaluations"
+author: "<insert group #>"
+date: "M6 ICA2 "
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #262626;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #ED4F4F;
+}
+/* Level 2 header */
+h2 {
+  color: #ED4F4F;
+}
+/* Level 4 header */
+h4 {
+  font-weight: bold;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #ED4F4F;
+    border-color: #ED4F4F;
+}
+    
+</style>
+
+```{r setup, include=FALSE}
+# global chunk options
+knitr::opts_chunk$set(echo = TRUE,
+                      error = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA,
+                      fig.width=6, 
+                      fig.height=5)
+```
+
+# Introduction
+
+This is adapted from Lab 6 in Duke's Introduction to Data Science course.
+
+We will analyze what goes into course evaluations and how certain variables effect the overall score.
+
+To get started, load the packages `tidyverse` and `broom`. 
+
+```{r}
+library(MASS)
+library(tidyverse)
+library(broom)
+```
+
+# Data
+
+The data were gathered from end of semester student evaluations for a large sample of professors from the University of Texas at Austin. In addition, six students rated the professors' physical appearance. Each row in `evals` contains a different course and the columns represent variables about the courses and professors.
+
+Use `read.csv()` to read in the data and save it as an object named `evals`. The data is available on D2L.
+
+
+```{r}
+evals <- read.csv("evals-mod.csv")
+```
+
+Below is a description of the variables in the data-set. 
+
+**Variable** | **Description**
+-------------|---------------------------------------------------------
+score |	Average professor evaluation score: (1) very unsatisfactory - (5) excellent
+rank |	Rank of professor: teaching, tenure track, tenure
+ethnicity |	Ethnicity of professor: not minority, minority
+gender |	Gender of professor: female, male
+language |	Language of school where professor received education: English or non-English
+age |	Age of professor
+cls_perc_eval |	Percent of students in class who completed evaluation
+cls_did_eval |	Number of students in class who completed evaluation
+cls_students |	Total number of students in class
+cls_level |	Class level: lower, upper
+cls_profs |	Number of professors teaching sections in course in sample: single, multiple
+cls_credits	| Number of credits of class: one credit (lab, PE, etc.), multi credit
+bty_f1lower |	Beauty rating of professor from lower level female: (1) lowest - (10) highest
+bty_f1upper |	Beauty rating of professor from upper level female: (1) lowest - (10) highest
+bty_f2upper |	Beauty rating of professor from upper level female: (1) lowest - (10) highest
+bty_m1lower |	Beauty rating of professor from lower level male: (1) lowest - (10) highest
+bty_m1upper |	Beauty rating of professor from upper level male: (1) lowest - (10) highest
+bty_m2upper |	Beauty rating of professor from upper level male: (1) lowest - (10) highest
+
+Before you get started, add the `avg_bty` variable.
+
+```{r}
+evals <- evals %>%
+  rowwise() %>% 
+  mutate(avg_bty = mean(bty_f1lower:bty_m2upper)) %>% 
+  ungroup()
+evals
+```
+
+
+# Part 1
+
+## Categorical predictors
+
+#### Task 1
+
+Fit a linear model with `score` as the response and `language` as a single predictor. Write out the estimated model.
+
+
+```{r}
+mod.fit <- lm(score ~ language, data = evals )
+
+mod.fit %>%
+  broom::tidy()
+```
+
+
+#### Task 2
+
+What is the baseline level of the previous model? Interpret the meaning of coefficient $b_1$.
+
+**The baseline (reference) is English (since R coded English = 0).  
+Coefficient b₁ = –0.10 means Non-English-educated professors score, on average, 0.10 points lower than English-educated professors.**
+
+
+#### Task 3
+
+Based on Task 1, what is the equation of the line for professors who received education at English speaking schools? What about for those who received education at non-English speaking schools?
+
+For Non-English (language = “Non-English”), the model is  
+\[
+\widehat{\mathrm{score}}
+= (3.85) + (-0.10)\times1
+= 3.75.
+\]
+
+
+#### Task 4
+
+Create a scatter plot of `score` versus `rank` with `ggplot()`. Use `geom_jitter()`.
+
+```{r}
+ggplot(evals, aes(x= rank, y= score)) +
+  geom_jitter() +
+  labs(x = "Rank of Professor", y = "Course evaluation score")
+```
+
+
+
+#### Task 5
+
+Fit a linear model with `score` as the response and `rank` as a single predictor. What is the baseline level? Write out the equation of the estimated model.
+
+```{r}
+mod.fit <- lm(score ~ rank, data = evals )
+
+mod.fit %>%
+  broom::tidy()
+```
+
+**Answer: ...**
+
+
+#### Task 6
+
+Add a new variable to `evals` called `rank_new` where the baseline level is set to "tenured". *Hint*: `rank = factor(rank)` and `relevel()`
+
+```{r}
+
+evals <- evals %>%
+  mutate(rank_new = relevel(factor(rank), ref = "tenured"))
+evals
+```
+
+
+
+#### Task 7
+
+Fit a linear model with `score` as the response and `rank_new` as a single predictor. Is the baseline now different from the baseline in Task 5?
+
+```{r}
+mod.fit <- lm(score ~ rank_new, data = evals )
+
+mod.fit %>%
+  broom::tidy()
+```
+
+**Now the intercept corresponds to Tenured professors, and the other rank coefficients give differences from tenured.*
+
+
+
+# Part 2
+
+## Multiple regression
+
+#### Task 8
+
+Fit a linear model with `score` as the response and `gender`, `rank`, and `avg_bty` as predictors. Write out the model. Give an interpretation for the coefficient of `avg_bty`.
+
+```{r}
+mod_mult <- lm(score ~ gender + rank + avg_bty, data = evals)
+tidy(mod_mult)
+```
+
+Holding gender and rank constant, each one‐point increase in the average beauty rating is associated with a 0.05‐point increase in course evaluation score.”
+
+
+#### Task 9
+
+What are the $R^2$ and adjusted $R^2$ values from your model in Task 8?
+
+```{r}
+
+
+glance(mod_mult) %>%
+  dplyr::select(r.squared, adj.r.squared)
+```
+
+
+#### Task 10
+
+Fit a linear model with `score` as the response and only `gender` and `avg_bty` as predictors. How did the $R^2$ and adjusted $R^2$ values change compared to Task 9?
+
+```{r}
+mod_simple <- lm(score ~ gender + avg_bty, data = evals)
+glance(mod_simple) %>%
+  dplyr::select(r.squared, adj.r.squared)
+```
+> With fewer predictors, R² changes from _\<old\>_ to _\<new\>_, and adj R² changes from _\<old\>_ to _\<new\>_.  (Typically a drop, since we dropped `rank`.)
+
+
+## Model Selection
+
+#### Task 11
+
+Fit a full model with `score` as the response and predictors: `rank`, `ethnicity`, `gender`, `language`, `age`, `cls_perc_eval`, `cls_students`, `cls_level`, `cls_profs`, `cls_credits`, `avg_bty`.
+
+```{r}
+mod_full <- lm(score ~ rank_new
+                       + ethnicity
+                       + gender
+                       + language
+                       + age
+                       + cls_perc_eval
+                       + cls_students
+                       + cls_level
+                       + cls_profs
+                       + cls_credits
+                       + avg_bty,
+               data = evals)
+
+glance(mod_full) %>%
+  dplyr::select(r.squared, adj.r.squared)
+```
+
+
+
+
+#### Task 12
+
+Why did we not consider `cls_did_eval` in the model?
+
+`cls_did_eval` is perfectly collinear with `cls_perc_eval` × `cls_students` – it adds no new information and would cause multicollinearity.
+
+
+#### Task 13
+
+Use the fitted full model in Task 11 and backward selection to determine the "best"" model. What are the $R^2$ and adjusted $R^2$ values from this "best" model?
+
+```{r}
+best_mod <- stepAIC(mod_full, direction = "backward", trace = FALSE)
+
+```
+
+```{r}
+# final R²
+glance(best_mod) %>%
+  dplyr::select(r.squared, adj.r.squared)
+```
+
+
+## Inference
+
+#### Task 14
+
+Create a 95% prediction interval based on new predictor values of your choosing. Use your "best" model from Task 13.
+
+```{r}
+new_prof <- tibble(
+  rank_new     = "tenured",
+  ethnicity    = "not minority",
+  gender       = "female",
+  language     = "English",
+  age          = 40,
+  cls_perc_eval= 75,
+  cls_students = 30,
+  cls_level    = "upper",
+  cls_profs    = "single",
+  cls_credits  = "multi credit",
+  avg_bty      = mean(evals$avg_bty)
+)
+new_prof
+```
+
+
+
+#### Task 15
+
+Create 95% confidence intervals for the coefficients of your "best"" model from Task 13.
+
+```{r}
+predict(best_mod, newdata = new_prof,
+        interval = "prediction", level = 0.95)
+```
+
+
+
+#### Task 16
+
+Can we use this model to make valid predictions about professors from any University?
+
+No – this data come from a single institution (or a limited set of courses), so predictions are only valid for professors and courses similar to those sampled.  Extrapolating to any university would require assuming the same underlying relationships hold, which may not.
+
+
+
+# References {#References-link}
+
+1. http://www2.stat.duke.edu/courses/Spring18/Sta199/labs/lab-06-modelling-course-evals.html
+

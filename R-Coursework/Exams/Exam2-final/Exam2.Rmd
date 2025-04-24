@@ -1,0 +1,236 @@
+---
+title: "Exam 2"
+author: "Araynah Dover"
+output: html_document
+date: "2025-04-17"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exam 2
+
+## Instructions (*Please Read!*)
+
+-   This exam is set up so that even if you get stuck on one part there
+    are opportunities to get points on the other parts, so consider
+    jumping ahead if you feel like you aren't making progress and then
+    come back later if you have time.
+-   This part of the exam has 70 total points available. Each question
+    is worth 5 points. Partial credit is available, so it is better to
+    at least put *something* rather than leaving a question blank.
+-   **Important note about using online resources:** This exam is "open
+    internet". That means that you can look up documentation, google how
+    to accomplish certain tasks, access old ICAs, etc. However, the use
+    of any person-to-person communication or communication with
+    generative AI such as ChatGPT is absolutely not acceptable. If you
+    are seen accessing your email, using ChatGPT, using a messaging
+    service, or accessing any sort of collaborative cloud storage or
+    document software (e.g. Google Documents), you will be at risk of
+    receiving a zero on the exam. If you have any of these open, close
+    them now before starting the exam.
+-   If you do use any permitted sources to help with a question, you
+    must cite your source in your code or answer.
+-   Keep your eyes on your screen! This exam is designed to give you the
+    opportunity to show the instructor what you can do and you should
+    hold yourself accountable for maintaining a high level of academic
+    integrity. If any of the instructors observe suspicious behavior,
+    you will, again, risk receiving a zero.
+-   You are encouraged to check the code chunks and test your code in
+    RStudio.
+
+Import packages here
+
+```{r}
+library(tidyverse)
+library(infer)
+library(broom)
+```
+
+### Section 1 (Inference Problems)
+
+Mercury levels were collected on 43 random specimens of Albacore tuna,
+the average mercury levels was found to be 0.358 parts per million (ppm)
+and the standard deviation of mercury level was 0.138 (ppm). The FDA
+website reports that the average mercury level in all Albacore tuna is
+0.391 ppm. The researchers wish to know if the average mercury level in
+Albacore tuna is different from what is reported on the FDA website.
+Test the hypothesis at 5% level of significance.
+
+The data "at" is given by:
+
+```{r}
+at <- data.frame(obs=c(1:43),ppm=c(0.35, 0.31, 0.31, 0.46, 0.39, 0.18, 0.47, 0.06, 0.37, 0.52, 0.34, 0.33, 0.42, 0.36, 0.24, 0.43, 0.30, 0.40, 0.55, 0.35, 0.36, 0.14, 0.09, 0.23, 0.42, 0.36, 0.35, 0.30, 0.54, 0.49, 0.12, 0.47, 0.47, 0.43, 0.53, 0.35, 0.36, 0.61, 0.44, 0.18, 0.36, 0.60, 0.12))
+```
+
+A glimpse of the data is:
+
+```{r}
+glimpse(at)
+```
+
+#### Question 1.1
+
+What is the parameter in the study referenced about?
+
+The population mean, μ - the average mercury level in
+Albacore tuna
+
+#### Question 1.2
+
+What are the null and alternate hypotheses in this study? Be
+specific.
+
+*The null hypothesis is ...H_0: mu = 0.358*
+
+*The alternate hypothesis is ... H_A mu != 0.358*
+
+
+
+#### Question 1.3
+
+Update the provided code to generate the null distribution.
+
+```{r}
+
+# Your code for Q1.3 below
+null.dist <- at %>%
+  specify(response = ppm) %>%
+  hypothesize(null = "point", mu = 0.358) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+```
+
+#### Question 1.4
+
+Plot the null distribution to confirm that it is correct. Draw a line where we expect the center of the null distribution to be. Use the
+following starter code.
+
+```{r}
+null.dist %>% 
+  ggplot(mapping = aes(x = stat)) +
+  geom_histogram(fill = "lightblue", color = "black", bins = 23) +
+  geom_vline(xintercept = 0.391, color = "red", linewidth = 1) + 
+  labs(x = "Sample proportions", y = "Count",
+       title = "Null distribution of sample means for samples of size 43",
+       caption = "10000 null sample means")
+```
+
+
+
+
+
+#### Question 1.5
+
+Calculate the p-value of the observed statistic.
+
+```{r}
+null.dist %>%
+filter(stat >= 0.391) %>%
+summarise(p_value = 2 * n() / nrow(null.dist))
+```
+
+#### Question 1.6
+
+Based on the significance level of 5% and your calculated p-value, what
+is the conclusion of the hypothesis test?
+
+*We would fail to reject at level 5% since our p value of 1.004 is > 0.05 significance level*
+
+#### Question 1.7
+
+Compute the 99% confidence interval for the average mercury level in
+Albacore tuna using the following starter code.
+
+```{r}
+null.dist %>%
+  summarise("99%CI_left" = quantile(stat, probs = 0.005), 
+            "99%CI_right" = quantile(stat, probs = 0.995))
+```
+
+#### Question 1.8
+
+Does increasing the confidence interval percentage make the confidence
+interval wider or narrower? Why?
+
+*It makes it wider reflecting greater confidence in capturing the true avg at the expense of a less precise estimate*
+
+### Section 2 (Linear Models)
+
+The data "mtcars" was extracted from the 1974 Motor Trend US magazine.
+It comprises of fuel consumption and 10 aspects of automobile design and
+performance information for a sample of 32 automobiles (1973–74 models).
+We will perform an analysis to check if the fuel consumption of a car
+(mpg) can be predicted by the weight (in 1000 lbs) of the car (wt).
+
+```{r}
+glimpse(mtcars)
+```
+
+#### Question 2.1
+
+Perform a linear regression to develop a model that predicts `mpg` from
+`wt`
+
+```{r}
+# Your code for Q2.1 below
+model <- lm(mpg ~ wt, data = mtcars)
+summary(model)
+```
+
+#### Question 2.2
+
+Interpret the value of the slope coefficient in this model. Be very
+specific.
+
+*The slope coefficient is -5.344, which means:
+
+- For each additional unit decreases in wt, the predicted mpg decreases by-5.344, assuming all other factors remain constant.*
+
+
+#### Question 2.3
+
+How much of the variation in the average mpg has been explained by this regression model. Use code to support your answer. 
+
+```{r}
+# Your code for Q2.3 below
+
+glance(model)
+```
+*R^2 = 0.75 so 75% of the total variation in mpg is explained by the model mt and about 25% is unexplained and attributed to other factors or random variation*
+
+#### Question 2.4
+
+For our model, we get an associated p-value with the slope constant. What are the null and alternate hypotheses associated with this p-value? 
+
+*The null hypothesis is 37.28*
+
+*The alternate hypothesis is -5.344*
+
+#### Question 2.5
+
+Now develop a new linear model that aims to predict `mpg` using the input features: `wt`, `disp`, `hp`, and `drat`. 
+
+```{r}
+mod.fit <- lm(mpg ~ wt+disp+hp+drat, data = mtcars)
+mod.fit %>%
+  broom::tidy()
+```
+#### Question 2.6 
+
+Now looking at the p-values of that model, make a parsimonious model considering only the significant feaures. Use a significance level of 0.05. 
+
+```{r}
+best_model <- lm(mpg ~ disp, data = mtcars)
+
+glance(best_model)[, c("r.squared", "adj.r.squared")]
+```
+
+
+## Deliverables
+
+When you've finished the exam, upload the RMD and knitted HTML file to D2L in the Exam 2 dropbox. If the code will not knit due to errors, just comment out the code causing the errors and proceed to knit. 

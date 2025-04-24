@@ -1,0 +1,182 @@
+---
+title: "Monte Carlo simulations"
+author: "<13>"
+date: "M5 ICA1"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #262626;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #71C144;
+}
+/* Level 2 header */
+h2 {
+  color: #FF664D;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #71C144;
+    border-color: #337ab7;
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+set.seed(2738952)
+```
+
+# Introduction
+
+>Monte Carlo simulations are a statistical technique used to model 
+probabilistic (or "stochastic") processes and establish the odds for a
+variety of outcomes. The concept was first popularized right after 
+World War II. To study nuclear fission, mathematician Stanislaw Ulam coined 
+the term in reference to an uncle who loved playing the odds at the Monte Carlo casino (then a world symbol of gambling, like Las Vegas today).
+
+To get started, load package `tidyverse` and set the random number generator
+in your setup R chunk. In the following problems you will make heavy use of
+functions
+
+- `sample(x, size, replace = FALSE, prob = NULL)`,
+
+- `replicate(n, expr, simplify = "array")`.
+
+```{r packages}
+library(tidyverse)
+```
+
+# Antoine Gombaud's question
+
+Conduct a simulation to answer the question below that was initially posed by 
+Antoine Gombaud (a famous gambler in the 17th century).
+
+Which is more likely:
+
+ a. getting at least one 6 when rolling a single fair six-sided die 4 times,
+ b. getting at least one pair of sixes when two fair six-sided dice are 
+    thrown 24 times.
+ 
+The number of simulation replications you choose is at your discretion, 
+but if you choose a number too small the results will not be accurate.
+
+
+```{r antoines}
+ #Number of simulations
+n_sim <- 10000
+
+
+sim_A <- replicate(n_sim, {
+  rolls <- sample(1:6, 4, replace = TRUE)
+  any(rolls == 6)  
+})
+
+```
+
+```{r antoine}
+
+sim_B <- replicate(n_sim, {
+  rolls <- replicate(24, sample(1:6, 2, replace = TRUE))  
+  six_pairs <- sum(rowSums(rolls == 6) == 2)  
+  six_pairs >= 1  
+})
+
+prob_A <- mean(sim_A)  
+prob_B <- mean(sim_B) 
+
+prob_A
+prob_B
+```
+
+# Enough?
+
+How many Monte Carlo experiments are enough? 
+
+ a. Perform Monte Carlo simulation to evaluate the probability of getting "Heads" in a fair coin toss. 
+ 
+ b. Use `ggplot()` to plot the probability estimate on the y-axis and the iteration (number of Monte Carlo) experiments on the x-axis. As the number of iterations gets large, you should see this value stabilize at around 0.50.
+
+```{r enough}
+
+
+flip <- function(n = 1) {
+  sample(c("H", "T"), size = n, replace = TRUE)
+}
+
+set.seed(42)  
+toss.df <- data.frame(toss = unlist(replicate(10000, flip(1)), use.names = FALSE))
+
+
+toss.df <- toss.df %>%
+  mutate(iterations = row_number(),
+         heads = ifelse(toss == "H", 1, 0),  
+         cum.prob = cumsum(heads) / iterations)  
+
+ggplot(toss.df, aes(x = iterations, y = cum.prob)) +
+  geom_line()
+```
+
+# Birthday problem
+
+Conduct a Monte Carlo simulation to answer the following questions 
+related to the birthday problem or birthday paradox.
+
+  a. What is the probability of at least two people sharing the same birthday 
+     (month and day) from a random sample of 23 individuals?
+  b. What is the probability of at least two people sharing the same birthday 
+     (month and day) from a random sample of 70 individuals?
+  c. Create a plot using `ggplot` with the number of individuals on the x-axis 
+     and the probability of at least one pair on the y-axis. You should 
+     simulate the probability of at least two people sharing the same 
+     birthday for each number of individuals from 2 to 100.
+  
+You may ignore leap year and assume 365 days per year. The number of simulation replications you choose is at your discretion, but if you choose a number 
+too small the results will not be accurate.
+
+
+```{r birthday-problem}
+#create a fuction bday.match(n) which will check whether there is a birthday match in a year between `n` individuals
+
+bday.match <- function(n) {
+  birthdays <- sample(1:365, n, replace = TRUE)  # Generate n random birthdays
+  any(duplicated(birthdays))  # Check if there's at least one duplicate
+}
+# For (a) check probability of match for 23 people
+emp.23 <- mean(replicate(100000, bday.match(23)))
+emp.23
+
+#(b)
+emp.70 <- mean(replicate(n_sim, bday.match(70)))
+# Here're the steps to create the dataframe needed for part (c)
+nmat <- matrix(c(2:100))
+event.results <- replicate(10000, apply(nmat, 1, bday.match))
+emp.results <- apply(event.results, 1, mean)
+emp.results.df <- data.frame(n = nmat, emp.prob = emp.results)
+
+
+ggplot(emp.results.df, aes(x = n, y = emp.prob)) +
+  geom_line(color = "blue")
+
+
+```
+
+# References
+
+1. http://news.mit.edu/2010/exp-monte-carlo-0517
+2. https://en.wikipedia.org/wiki/Antoine_Gombaud

@@ -1,0 +1,256 @@
+---
+title: "Exam 1"
+name: "Araynah Dover"
+output: html_document
+date: "2025-02-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ISLR2)
+```
+
+# Exam 1
+
+## Instructions (*Please Read!*)
+
+-   This exam is set up so that even if you get stuck on one part there are opportunities to get points on the other parts, so consider jumping ahead if you feel like you aren't making progress and then come back later if you have time.
+-   This part of the exam has 60 total points available. Each question is worth 5 points. Partial credit is available, so it is better to at least put *something* rather than leaving a question blank.
+-   **Important note about using online resources:** This exam is "open internet". That means that you can look up documentation, google how to accomplish certain tasks, access old ICAs, etc. However, the use of any person-to-person communication or communication with generative AI such as ChatGPT is absolutely not acceptable. If you are seen accessing your email, using ChatGPT, using a messaging service, or accessing any sort of collaborative cloud storage or document software (e.g. Google Documents), you will be at risk of receiving a zero on the exam.
+-   Keep your eyes on your screen! This exam is designed to give you the opportunity to show the instructor what you can do and you should hold yourself accountable for maintaining a high level of academic integrity. If any of the instructors observe suspicious behavior, you will, again, risk receiving a zero.
+-   You are encouraged to check the code chunks and test your code in RStudio.
+
+### Section 1
+
+#### Question 1.1
+
+Write the R code to create a vector called `Oceania` that contains the 14 countries in Oceania. Use the given vectors `Oceania1` and `Oceania2` in your solution.
+
+*Oceania1 \<- c("Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "New Zealand")*
+
+*Oceania2 \<- c("Palau", "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu","Vanuatu")*
+
+```{r Combining Vectors}
+Oceania1 <- c("Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "New Zealand")
+Oceania2 <- c("Palau", "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu","Vanuatu")
+
+# Your code for Q1.1 below
+Oceania <- c(Oceania1,Oceania2)
+Oceania
+```
+
+#### Question 1.2
+
+You are given the following vector, `count.by.three` below. Using R code and the supplied vector, extract the 13th-20th elements.
+
+```{r Extracting Elements}
+count.by.three <- seq(12,99,3)
+
+# Your code for Q1.2 below
+count.by.three[13:20]
+```
+
+#### Question 1.3
+
+This question will use the built-in `CO2` dataset. Add a new column to the `CO2` data set called `uptake.per.conc`, which contains the uptake divided by the concentration for each observation.
+
+```{r Show Data Set}
+# Your code for Q1.3 below
+head(CO2)
+```
+```{r Add a new Column}
+CO2 %>%
+  mutate(uptake.per.conc = uptake / conc)
+
+# or
+
+CO2$uptake.per.conc <- CO2$uptake / CO2$conc
+```
+
+### Section 2
+
+The following questions are based on the dataset `titanic3` from the PASWR package. The data consists of demographic and traveling information for the 1,309 of the Titanic passengers. **Note: you may need to install the `PASWR` package for it to load in properly. If it still doesn't load in, you can load in the supplied Rdata file.**
+
+```{r}
+library(PASWR)
+head(titanic3)
+```
+
+#### Question 2.1
+
+Use dplyr functions to find the mean age of passengers for each class.
+
+```{r Age per class}
+# Your code for Q2.1 below
+
+titanic3 %>% 
+  group_by(pclass) %>%
+  summarise(mean_perclass = mean(age,na.rm = TRUE))
+  
+```
+
+#### Question 2.2
+
+Use R code to find the number of unique lifeboats that were used by survivors. Hint: The lifeboat number of a survivor can be found in the `boat` column.
+
+```{r Using Unique}
+# Your code for Q2.2 below
+number_lifeBoats <- titanic3 %>%
+  group_by(boat) %>%
+  summarise(count = n())
+
+number_lifeBoats
+```
+
+#### Question 2.3
+
+Modify the following starter code so that it outputs the following. Note: std_age represents the standard deviation of age.
+
+```         
+# A tibble: 2 × 4
+  sex    missing mean_age std_age
+  <fct>    <int> <dbl>    <dbl>
+1 female      78  28.7     14.6
+2 male       185  30.6     14.3
+```
+
+```{r}
+# Modify this code for Q2.3
+titanic3 %>%
+  group_by(sex) %>%
+  summarise(missing = sum(is.na(age)), mean_age = mean(age,na.rm=TRUE), std_age = sd(age,na.rm=TRUE))
+```
+
+### Section 3
+
+This section contains True/False questions about R code. Write your answer in the indicated locations.
+
+#### Question 3.1
+
+The following code chunks will produce the same information.
+
+code 1:
+
+```{R}         
+titanic3 %>%
+filter(!is.na(age) & !is.na(fare)) %>%
+summarise(age = mean(age), fare = mean(fare))
+```
+
+code 2:
+
+```{R}         
+titanic4 <- titanic3[!is.na(titanic3$age) & !is.na(titanic3$fare), ]
+apply(titanic4[, c(5,9)], 1, mean)
+```
+
+True/False? : `False` when you use 1 in apply you are applying that to the rows in the second chunk the first is doing columns
+
+#### Question 3.2
+
+The following two code chunks will provide you with the same information.
+
+code1:
+
+```{R}         
+titanic3 %>%
+filter(pclass == "2nd") %>%
+group_by(survived) %>%
+summarise(count = n())
+```
+
+code 2:
+
+```{R}         
+table(titanic3$survived[titanic3$pclass == "2nd"])
+```
+
+True/False? : `True` gives same answers just in different formats
+
+#### Question 3.3
+
+The dataset in this question `Carseats` comes from the ISLR2 package. You can also load in the dataset using the supplied Rdata file.
+
+The following code snippets produce the same information.
+
+code 1:
+
+```{R}         
+Carseats %>%
+filter(ShelveLoc=="Medium") %>%
+summarise(TotalCarseats=n(), Mean_sale = mean(Sales, na.rm=TRUE), StdDev_sale = sd(Sales, na.rm=TRUE))
+```
+
+code 2:
+
+```{R}         
+CarseatsM <- subset(Carseats, Carseats$ShelveLoc=="Medium")
+data.frame(TotalCarseats=length(CarseatsM$ShelveLoc), Mean_sale = mean(CarseatsM$Sales), StdDev_sale=sd(CarseatsM$Sales))
+```
+
+True/False? : `True` Same information just given for getting mean,sd, and total
+
+#### Question 3.4
+
+The dataset in this question `Credit` comes from the ISLR2 package.
+
+The following two code snippets produce the same information.
+
+code 1:
+
+```{R}         
+Credit %>%
+group_by(Married) %>%
+summarise(Count=n(), Average_rating=mean(Rating, na.rm=TRUE), StdDev_rating=sd(Rating, na.rm=TRUE))
+```
+
+code 2:
+
+```{R}         
+CreditM <- subset(Credit, Credit$Married=="Yes")
+data.frame(Married = c("No","Yes"), Count=c(length(Credit$Married), length(CreditM$Married)), Average_rating=c(mean(Credit$Rating, na.rm=TRUE), mean(CreditM$Rating, na.rm=TRUE)), StdDev_rating=c(sd(Credit$Rating, na.rm=TRUE), sd(CreditM$Rating, na.rm=TRUE)))
+```
+
+True/False? : `Fale` The counts avg rates and std avgs are different
+
+### Section 4
+
+This section will focus on creating plots in R. You will be given some starter code for each question that you will be responsible for completing to match the referenced images.
+
+#### Question 4.1
+
+In this question you will recreate the following plot from the starter code given. If the image does not render in your notebook, you can view the image by pasting the link in your browser. (<https://github.com/hoolagans/STT180_Public/blob/main/Rplot.png?raw=true>).
+
+![Plot 1](https://github.com/hoolagans/STT180_Public/blob/main/Rplot.png?raw=true)
+
+```{r}
+# Modify this starter code to create a plot matching the supplied image
+titanic3 %>%
+  ggplot(mapping=aes(x=age, y=fare,color = sex,size = pclass)) + 
+  geom_point()
+```
+
+#### Question 4.2
+
+In this question you will recreate the following plot from the starter code given. If the image does not render in your notebook, you can view the image by pasting the link in your browser. (<https://github.com/hoolagans/STT180_Public/blob/main/Rplot03.png?raw=true>)
+
+![Plot 2](https://github.com/hoolagans/STT180_Public/blob/main/Rplot03.png?raw=true)
+
+```{r}
+# Modify this starter code to create a plot matching the supplied image
+  
+```
+
+```{r}
+
+iris %>% 
+  ggplot(mapping = aes(x=Sepal.Length, color = Species)) +
+  geom_boxplot(aes(Sepal.Length)) + # Add a layer to add points or symbols
+  facet_grid(rows=vars(Species))
+
+```
+

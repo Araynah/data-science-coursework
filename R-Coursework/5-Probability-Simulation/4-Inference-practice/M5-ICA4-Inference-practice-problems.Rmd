@@ -1,0 +1,292 @@
+---
+title: "Inference practice problems"
+author: "<insert group #> "
+date: "M5 ICA4"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #262626;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #71C144;
+}
+/* Level 2 header */
+h2 {
+  color: #71C144;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #71C144;
+    border-color: #337ab7;
+</style>
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      error = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+```
+
+# Introduction
+
+Quantities $\bar{x}$ and $\hat{p}$ are good point estimates for the population mean and population proportion, respectively. They are used in estimation and hypothesis testing. These point estimates vary from one sample to another. We will use the package `infer` to get a deeper understanding of both simulation-based and theoretical inference. To get started, load packages `tidyverse` and `infer`.
+
+```{r packages}
+library(tidyverse)
+library(infer)
+set.seed(12345)
+```
+
+
+# Inference on population proportion
+
+## Hypothesis testing
+
+The American Automobile Association claims that 54% of fatal car/truck accidents are caused by driver error. A researcher studies 35 randomly selected accidents and finds that 14 were caused by driver error. Is this evidence that the proportion is not actually 54%? Test the claim at $\alpha = 0.05$ significance level. 
+
+1. Identify the parameter of interest and compute the sample statistic.    
+
+The parameter of interest The true proportion p of fatal car/truck accidents caused by driver error: p = 14/35 or 40%
+
+
+2. State the null and alternative hypotheses for the given test. 
+
+The null hypotheses is given which is `0.54` and alternative hypotheses != 0.54
+
+3. Below we create a data frame `driver` to represent our sample data. The data frame will have a variable `value` with 14 "yes"s and 21 "no"s, representing whether the accident was caused by driver error. 
+
+
+```{r}
+# create data frame driver
+driver <- tibble(
+  value = rep(c("yes", "no"), times = c(14, 21))
+)
+
+obs_p <- mean(driver$value == "yes")    # 14/35 = 0.4
+```
+
+4. Simulate the null distribution using a sequence of functions from the package `infer`. Follow the template in the notes, previous assignments, and take a look at the help for each function. Plot a histogram of the null distribution and place a vertical line at the value of the observed sample proportion of 0.4. Hint: `bins = 23`
+
+```{r null-proportions}
+
+null_prop <- driver %>%
+  specify(response = value, success = "yes") %>%
+  hypothesize(null = "point", p = 0.54) %>%
+  generate(reps = 10000, type = "simulate") %>%
+  calculate(stat = "prop")
+
+```
+
+
+```{r null-distribution}
+ggplot(null_prop, aes(x = stat)) +
+  geom_histogram(bins = 23, color = "blue", fill = "lightblue") +
+  geom_vline(xintercept = obs_p, color = "red", linetype = "dashed") +
+  labs(
+    title = "Null distribution of p̂ under H₀: p=0.54",
+    x     = "p̂",
+    y     = "count"
+  )
+```
+
+5. Use the simulated null distribution to compute the p-value. Recall that the p-value is the probability of observing data at least as favorable to the alternative hypothesis as our current data set, given that the null hypothesis is true.
+
+```{r p-value}
+null_prop <- driver %>%
+  specify(response = value, success = "yes") %>%
+  hypothesize(null = "point", p = 0.54) %>%
+  generate(reps = 10000, type = "simulate") %>%
+  calculate(stat = "prop")
+```
+
+
+6. At 5% significance level, do we have evidence that the proportion of fatal car/truck accidents cause by human error is different from 0.54?  
+
+Our two‐sided p‐value was computed in question (―) as about 0.1392. Since  0.1392 > 0.05 we **fail to reject** \(H_0\).  At the 5% level, there is **not** enough evidence to say the true proportion differs from 0.54.
+
+
+7. Will your conclusion change if the testing was done at the 10% significance level?    
+**\(0.1392 > 0.10\), so even at the 10% level we **still fail to reject** \(H_0\).  No change.**
+
+
+
+## Confidence interval
+
+8. Compute a 95% confidence interval for the proportion of all fatal car/truck accidents caused due to driver error. You may assume all the necessary assumptions are satisfied. Plot the bootstrap distribution and mark the endpoints and the center of the confidence interval with vertical lines. 
+
+```{r bootstrap-confidence-interval}
+boot_prop <- driver %>%
+  specify(response = value, success = "yes") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "prop")
+
+# 5) 95% bootstrap CI
+ci_prop <- quantile(boot_prop$stat, c(0.025, 0.975))
+```
+
+```{r bootstrap-distribution}
+ggplot(boot_prop, aes(x = stat)) +
+  geom_histogram(binwidth = 0.02, fill = "lightblue", color = "black") +
+  geom_vline(xintercept = ci_prop[1], col = "red",   linetype = 2) +
+  geom_vline(xintercept = ci_prop[2], col = "red",   linetype = 2) +
+  geom_vline(xintercept = obs_p,       col = "purple", size = 1) +
+  labs(title = "Bootstrap Distribution of p̂",
+       x     = "p̂",
+       y     = "Count") +
+  theme_minimal()
+```
+
+
+9. Does the confidence interval constructed in the previous example reflect the results obtained from the hypothesis testing? Justify your answer.    
+
+The 95% CI from the bootstrap is approximately \([0.237,\,0.562]\), which **does** include 0.54.  That matches our test conclusion (we did not reject \(H_0\)).
+
+
+# Inference on population mean
+
+## Hypothesis testing 
+
+A certain chemical pollutant in the Genesee River has been constant for several years with mean $\mu = 34$ ppm (parts per million) and standard deviation $\sigma = 8$ ppm. A group of factory representatives whose companies discharge liquids into the river is now claiming that they have lowered the average with improved filtration devices. A group of environmentalists will test to see if this is true at the $5\%$ level of significance. Assume that their sample of size 50 gives a mean of 32.5 ppm.  Perform a hypothesis test at the $5\%$ significance level and state your conclusion. 
+
+
+1. Identify the parameter of interest.    
+
+The true mean concentration \(\mu\) of the pollutant in the Genesee River.
+
+
+2. State the null and alternative hypotheses for the given test.    
+
+\[
+\begin{cases}
+H_0: \mu = 34,\\
+H_A: \mu \neq 34.
+\end{cases}
+\]
+
+Below we simulate a null distribution by taking samples of size 50 from a normal population with mean 34 and standard deviation 8, and computing the mean of each sample. The sample means are stored in the data frame `null_means`. 
+
+```{r}
+null_means <- as.tibble(replicate(n = 10000, expr = mean(rnorm(n = 50, mean = 34, sd=8))))
+```
+
+
+3. Plot the simulated null distribution and place a vertical line at the value of the observed sample mean.
+
+```{r}
+# simulate 10,000 sample‐means under H₀: μ = 34
+null_means <- tibble(
+  stat = replicate(
+    n    = 10000,
+    expr = mean(rnorm(n = 50, mean = 34, sd = 8))
+  )
+)
+
+# now plot with ggplot
+ggplot(null_means, aes(x = stat)) +
+  geom_histogram(binwidth = 0.2, fill = "gray80", color = "black") +
+  geom_vline(xintercept = 32.5, col = "blue", size = 1) +
+  labs(
+    title = "Null Distribution of Sample Mean (μ₀ = 34)",
+    x     = "Sample Mean",
+    y     = "Count"
+  ) +
+  theme_minimal()
+```
+
+4. Use the simulated null distribution to compute the p-value. Recall that the p-value is the probability of observing data at least as favorable to the alternative hypothesis as the current data set, given that the null hypothesis is true.
+
+
+```{r}
+obs_mean <- 32.5
+
+# two‐sided p-value
+p_two <- mean(abs(null_means$stat - 34) >= abs(obs_mean - 34))
+p_two
+```
+
+5. What conclusion do you draw at 5% significance level?    
+Since  
+\[
+p_{\text{two}} \approx 0.184 > 0.05,
+\]  
+we **fail to reject** \(H_0\).  There is not enough evidence to conclude the true mean differs from 34.
+
+
+
+
+## Confidence interval 
+
+6. Compute 94% and 98% confidence intervals for the average concentration of the chemical pollutant in the Genesee River. Hint: shift the null distribution so that the center is at 32.5, the original sample mean. 
+
+```{r}
+shifted <- null_means %>%
+  mutate(stat_centered = stat - 34 + 32.5)
+
+# 2) 94% CI → drop 3% tails
+ci94 <- quantile(shifted$stat_centered, probs = c(0.03, 0.97))
+# 3) 98% CI → drop 1% tails
+ci98 <- quantile(shifted$stat_centered, probs = c(0.01, 0.99))
+
+ci94
+ci98
+```
+
+
+7. Plot the bootstrap distribution and mark the endpoints and the center of the 96% and 98% confidence intervals with vertical lines. 
+
+```{r}
+# 1) Define standard error
+se <- 8 / sqrt(50)
+
+# 2) Compute z‐scores and CIs
+z96  <- qnorm(1 - 0.04/2)   # for 96%
+z98  <- qnorm(1 - 0.02/2)   # for 98%
+ci96 <- 32.5 + c(-1,1) * z96 * se
+ci98 <- 32.5 + c(-1,1) * z98 * se
+
+# 3) Build a density curve for N(32.5, se^2)
+curve_df <- tibble(
+  x = seq(32.5 - 4*se, 32.5 + 4*se, length.out = 400),
+  y = dnorm(x, mean = 32.5, sd = se)
+)
+
+# 4) Plot with vertical lines at the CI endpoints and the center
+ggplot(curve_df, aes(x = x, y = y)) +
+  geom_line() +
+  geom_vline(xintercept = ci96, col = "red",   linetype = "dashed") +
+  geom_vline(xintercept = ci98, col = "blue",  linetype = "dashed") +
+  geom_vline(xintercept = 32.5, col = "purple", size = 1) +
+  labs(
+    title = "Sampling Distribution with 96% (red) & 98% (blue) CIs",
+    x     = "Sample Mean",
+    y     = "Density"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+# References
+
+1. https://cran.r-project.org/web/packages/infer/vignettes/flights_examples.html
+
+2. http://math.oxford.emory.edu/site/math117/probSetHypothesisTestsOneProportion2/

@@ -1,0 +1,379 @@
+---
+title: "SP 25 STT 180 Homework 3"
+author: "Araynah Dover"
+date: "Mar 25 - Apr 11, 2025"
+output: 
+  html_document:
+    toc: true
+    number_sections: false
+    toc_float: true
+    toc_depth: 4
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+```
+
+
+**Setting up:**
+
+Load `tidyverse` (which includes `dplyr`, `ggplot2`, `tidyr`, and other packages), `infer`, `knitr` and `broom` packages.
+
+
+```{r echo=FALSE}
+library(tidyverse)
+library(infer)
+library(knitr)
+library(broom)
+```
+
+
+Homework 3 has two sections. In Section 1, you will deal with inference. In Section 2, you will work with linear models.
+
+**General Instructions:** 
+
++ This is an individual assignment. You may consult with others as you work on the assignment, but each student should write up a separate set of solutions. 
++ Rather than creating a new Rmd file, just add your solutions to the supplied Rmd file. **Kindly save the solution file and output as your "AraynahDover-HW3"**
++ **Zip and submit both the Rmd file and the resulting HTML file to D2L.** 
++ Please note if you are **compiling to a pdf, change the option in the YAML and also delete the .css lines in the file.**
++ Except for questions, or parts of questions, that ask for your commentary, use R in a code chunk to answer the questions. 
++ The code chunk option `echo = TRUE` is specified in the setup code chunk at the beginning of the document. Please do not override this in your code chunks.
++ Any use of external sources must be properly cited, including AI
+    sources. If using AI, a proper citation should include the tool
+    used, the prompt chain, and the date accessed. Not including proper
+    citations is plagiarism and could result in a 0.
++ A solution will **lose points if the Rmd file does not compile**. If one of your code chunks is causing your Rmd file to not compile, you can use the `eval = FALSE` option. Another possibility is to use the `error = TRUE` option in the code chunk. 
++ This Homework is due on **Friday, April 11th, 2025 on or before 11 pm.**
+
+
+# Section 1
+
+For the first section of this homework will use the `Breast_Cancer.csv` file. There are 10 quantitative variables and a binary dependent variable indicating the presence or absence of breast cancer. The predictors are anthropometric data which can be gathered in routine blood analysis. 
+
+Read in the data and convert the data frame to a tibble.
+
+```{r echo=TRUE}
+breast_cancer <- read.csv("Breast_Cancer.csv", header = TRUE)
+breast_cancer <- as_tibble(breast_cancer)
+```
+
+A glimpse of the data:
+
+```{r  print column information}
+glimpse(breast_cancer)
+```
+
+The variables in the data set are:
+
+Variable | Description
+---------|------------
+`Age` | age in years.
+`BMI` | the body mass index.
+`Glucose (mg/dL)` | the fasting glucose level (mg/dL).
+`Insulin (µg/mL)` | amount of insulin.
+`HOMA` | Homeostasis Model Assessment.
+`Leptin (ng/mL) ` | type of adipocytokines    
+`Adiponectin (µg/mL) ` | a protein hormone. 
+`Resistin (ng/mL)` | cysteine-rich peptide hormone.
+`MCP-1(pg/dL)` | Monocyte chemoattractant protein-1 (MCP-1)
+`Classification` | 1= Healthy control, 2= Breast Cancer Patients.
+
+
+Make sure to familiarize yourself with the data by reading about the variables on the website. Note that the data comes the study https://bmccancer.biomedcentral.com/articles/10.1186/s12885-017-3877-1. 
+
+According to the CDC (https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html), a BMI between 18-25 is considered normal. 
+
+Using the `breast_cancer` data, let's investigate whether breast cancer patients have a normal BMI on average (considering 25 as normal).
+
+### Question 1
+
+What is the parameter for the above investigation?  The average `BMI` of patients with breast cancer
+
+Calculate the sample statistic. 
+
+```{r AverageBMI for both groups, echo=FALSE}
+mean.bmi <- mean(breast_cancer$BMI)
+mean.bmi
+```
+
+Is it a continuous or categorical sample statistic?
+mean.bmi is a continuous sample statistic because it summarizes a continuous varaible BMI using a mean calculation
+ 
+### Question 2
+
+a. Set up and test the hypotheses to determine whether breast cancer patients have higher than normal BMI (25). (Hint: Follow the hypothesis process step-wise as you have done in your Module 5 group assignments and think about the direction of the alternative hypothesis.)
+
+- State the null and alternative hypotheses.
+`Null hypothesis`:H_0 = 25
+`Alternative hypothesis`: H_A != 25
+
+- Generate the null distribution and plot the distribution.
+
+
+```{r null_dist, echo=FALSE}
+null_dist <- breast_cancer %>%
+  specify(response = BMI) %>%
+  hypothesize(null = "point", mu = 25) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+ggplot(null_dist, aes(x = stat)) +
+  geom_histogram(bins= 24, binwidth = 0.2, color = 'blue', fill = 'skyblue') +
+  labs(title = "BMI for breast cancer patients",
+       x = "Total BMI",
+       y = "Count") + geom_vline(xintercept = mean.bmi, color = "red")
+```
+
+b. Determine the p-value and compare it to $\alpha =0.05$.
+
+```{r p_value, echo=FALSE}
+null_dist %>% 
+  filter(stat >= mean.bmi) %>%
+  summarise(p_value = n() / nrow(null_dist))
+```
+
+c. Conclude and interpret the results: The p value is than 0.05 meaning we reject the null hypothesis. which we can see from our sample statistic of 27.5 that its greater than 25 
+### Question 3
+
+a. Estimate 95% confidence interval for average BMI of breast cancer patients.
+
+
+```{r 95%CI, echo=FALSE}
+set.seed(4321)
+# bootstrap samples
+boot.means <- breast_cancer %>%
+  specify(response = BMI) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+# cutoff bounds
+# save as vector
+
+bound <-boot.means %>%
+summarise(lower95 = quantile(stat, probs = .025), upper95 = quantile(stat, probs = .975))
+
+bound
+```
+
+b. Interpret the 95% confidence interval.
+
+Meaning we can be 95% confident that the true avg BMI of patients are between 26.677 and 28.4849
+
+### Question 4
+
+Is having a higher than normal BMI an indicator of increased risk of breast cancer given your results in 2 and 3? (Hint: Consider the BMI of people that don’t have breast cancer (healthy control). Run the hypothesis test and estimate the 95% confidence interval to check the your conclusion.) 
+
+```{r healthy people, echo=FALSE}
+set.seed(4321)
+
+healthy <- breast_cancer %>% 
+  filter(Classification == 1)
+
+mean.bmi.healthy <- mean(healthy$BMI)
+mean.bmi.healthy
+
+null_dist_healthy <- healthy %>% 
+  specify(response = BMI) %>% 
+  hypothesize(null = "point", mu = 25) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+
+ggplot(null_dist_healthy, aes(x = stat)) +
+  geom_histogram(binwidth = 0.2, color = 'blue', fill = 'skyblue') +
+  labs(title = "BMI for healthy subjects",
+       x = "Total BMI",
+       y = "Count")+ geom_vline(xintercept = mean.bmi.healthy, color = "red")
+
+p_value_healthy <- null_dist_healthy %>% 
+  filter(stat >= mean.bmi.healthy) %>%   
+  summarise(p_value = n() / nrow(null_dist_healthy))
+p_value_healthy
+
+ci_healthy <- null_dist_healthy %>%
+  summarise(lower95 = quantile(stat, probs = 0.025),
+            upper95 = quantile(stat, probs = 0.975))
+ci_healthy
+```
+
+Justify your answer in 3-4 sentences.
+The hypothesis test gave a p value of 0 and a 95% confidence interval of (26.677,28,4849) above the normal BMI of 25, meaning that the avg is higher than normal. The given results support the facts of that the elevated BMI is associated with breast cancer.
+
+# Section 2
+
+For this section of this homework will use the`abalone.csv` file from UCI repository (https://archive.ics.uci.edu/ml/datasets/Abalone).
+
+The number of rings in the shell of an abalone is indicative of its age. This is done by cutting the shell through the cone, staining it, and counting the number of rings through a microscope -- a boring and time-consuming task. In this section, we will analyze the relationship between age (measured by the number of rings) and a few different variables present in the data.
+
+
+
+```{r read data}
+ab <- read.csv("abalone.csv")
+glimpse(ab)
+```
+
+### Question 1
+
+We will start by analyzing a simple bivariate relationship between age and height. 
+
+(a) Plot a scatter plot to get an idea about the relationship between height and age. 
+
+```{r scatter plot}
+ggplot(ab, aes(x= Rings, y= Height)) +
+  geom_point() + labs(x = "Number of Rings (Age)", y = "Height", title = "Relationship between Age and Height")
+```
+
+(b) Comment (1-3 sentences) on the plot.
+
+The age ranges from abput 1-4 with a heaight below 0.3 with a few outliers above that, this association between rings (age) and height is relatively weak
+
+### Question 2
+
+(a) Modify the plot in Question 1 to reflect the effect of the variable `Sex` in the plot.
+
+```{r scatter plot_sex}
+ggplot(ab, aes(x= Rings, y= Height, color = Sex)) +
+  geom_point() + labs(x = "Number of Rings (Age)", y = "Height", title = "Relationship between Age and Height by Sex")
+```
+
+(b) Is there any significant pattern or distribution based on the `Sex` of the abalone?
+
+Based on the scatter plot above its hard to tell the relationship but based off what is currently seen there is no great significants 
+### Question 3
+
+One of the goal is to study if there is significant difference in the age of the abalone based on shell weight, height, and diameter.  
+
+(a) Fit a multiple regression model to test the effect of the three variables on the age of the abalone.
+
+```{r MLR}
+mlr_model <- lm(Rings ~ Shell + Height + Diameter, data = ab)
+
+mlr_model %>%
+  broom::tidy()
+```
+
+(b) Comment on the effect of the three variables based on their direction, magnitude, and significance.
+
+The multiple regression model shows that shell weight and diameter have a  strong positive effect on abalone age. The coefficient of approximately 16.28, meaning that for each unit increase in shell weight, the number of rings increases by about 16.28. Height shows a positive relationship about 11.20  showing that taller abalones tend to have more rings
+
+### Question 4
+
+Can the model in Question 3 be improved to make it more parsimonious? Does it significantly change the model fit parameters? The reduced model drops the Diameter predictor and includes only Shell and Height, making the model more parsimonious, the parameters remain pretty significant 
+
+```{r model step}
+
+reduced_model <- step(mlr_model, direction = "backward", trace = FALSE)
+reduced_model
+```
+
+### Question 5
+
+(a) How about the variable `Sex`? Does it have any significant impact on predicting the `Age` if included in the model from Question 4?
+
+```{r model rings}
+model_with_sex <- lm(Rings ~ Sex + Shell + Diameter, data = ab)
+model_with_sex
+```
+
+(b) Write out the best fit model based on your results.
+
+Rings = 7.41 − 1.02 × SexI − 0.17 × SexM + 13.15 ×Shell − 0.55 × Diameter
+
+
+### Question 6	
+
+Interpret the results from the model in Question 5. Interpret each coefficient in the model. What does each coefficient signify?
+
+In the model, the intercept of 7.41 is the estimated number of rings for a baseline female abalone when the other predictors are zero. The coefficient for SexI –1.02 means that infants have about one ring less than females, while SexM –0.17 indicates that males have only a very small decrease in rings compared to females. The Shell coefficient 13.15 shows that as shell weight increases by one unit, the number of rings increases by about 13.15, and the Diameter coefficient –0.55 suggests that a higher diameter is associated with a slight decrease in rings.
+
+### Question 7:
+
+(a) What is the predicted value and the prediction interval of the `Age` of a female abalone whose `Shell` weight is 0.768 gram and `Height` is 0.95mm?
+
+Using the reduced model Rings ~ Shell + Height, the predicted number of rings for a female abalone with a shell weight of 0.768 g and height of 0.95 mm is calculated as 5.626 + 11.996×0.768 + 10.340×0.95, which is about 24.66 rings. When we use the predict() function with a 95% prediction interval, the prediction likely falls between roughly 22 and 27 rings, meaning we are 95% confident that a similar female abalone’s true age rings will lie within this range.
+
+
+(b) What is the predicted value and the prediction interval of the `Age` of a infant abalone whose `Shell` weight is 0.0010 gram and `Height` is 1.25mm? (Note the values of the predictor variables.)
+
+For an infant abalone with a shell weight of 0.0010 g and height of 1.25 mm, the predicted number of rings is 5.626 + 11.996×0.0010 + 10.340×1.25, which comes out to about 18.56 rings. With the 95% prediction interval computed in a similar way, the expected range is approximately 16 to 21 rings, indicating that if we observed a similar infant abalone, its true number of rings would most likely fall within that interval.
+
+</b></b>
+
+
+
+# Essential details {.tabset .tabset-fade .tabset-pills}
+
+### Deadline and submission
+
++ The deadline to submit Homework 3 is **11:00pm on Friday, April 11th, 2025.** 
+
++ This is a individual assignment. Save your file with your name and write your name in the YAML header. Points will be deducted if these are not done.
+
++ Submit your work by uploading your RMD and HTML/PDF files through D2L. Kindly **double check your submission to note whether the everything is displayed in the uploaded version of the output in D2L or not.** If submitting HTML outputs, please zip the .rmd and html files for submission.
+
++ Please do not disable the **`echo=TRUE`** option in your global code chunk. 
+
++ Please **name all the code chunks**.
+
++ **Late work will not be accepted except under certain extraordinary circumstances.**
+
+
+### Help
+
+-   Feel free to visit us during our virtual office hours or make an
+    appointment.
+
+-   Communicate with your classmates, but do not share snippets of code.
+
+-   Start the assignment early. **If you wait until the last minute to
+    start and try to ask questions the night the assignment is due, we
+    cannot guarantee a timely response.**
+
+
+### Academic integrity
+
+This is an individual assignment. You may discuss ideas, how to debug
+code, and how to approach a problem with your classmates. You may not
+copy-and-paste another's code from this class or copy answers directly
+from an AI tool (example: ChatGPT). As a reminder, below is the policy
+on sharing and using other's code.
+
+> Similar reproducible examples (reprex) exist online that will help you
+> answer many of the questions posed on group assignments, and homework
+> assignments. Use of these resources is allowed unless it is written
+> explicitly on the assignment. While you may use AI tools to help debug
+> code or understand a topic, you may not use it to answer assignment
+> questions for you. You must ALWAYS cite any code you copy or use as
+> inspiration. Copied code without citation is plagiarism and will
+> result in a 0 for the assignment.
+
+
+### Grading
+
+Use the R Markdown blank file that is provided. If you want you can use your own formatting. Self-formatting is at your discretion but is graded. Use the
+in-class assignments and resources available online for inspiration. Another 
+useful resource for R Markdown formatting is
+available at: https://holtzy.github.io/Pimp-my-rmd/
+
+**Topic**|**Points**
+---------|----------:|
+Questions(total 11) and communication of results | 85 
+R Markdown formatting and knitting | 7
+Code style| 8
+**Total**|**100**
+
+Please note: Code style includes code efficiency, naming code chunks, etc.
+
+
+# Reference
+
+https://bmccancer.biomedcentral.com/articles/10.1186/s12885-017-3877-1. 
+
+https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Coimbra
+
+https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html
+
+https://archive.ics.uci.edu/ml/datasets/Abalone

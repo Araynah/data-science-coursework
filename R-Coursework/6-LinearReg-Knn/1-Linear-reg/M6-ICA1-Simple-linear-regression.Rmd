@@ -1,0 +1,226 @@
+---
+title: "Simple linear regression: Car prices"
+author: "<insert group #>"
+date: "M6 ICA1"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+<style type="text/css">
+/* Title */
+h1.title {
+  color: #262626;
+  font-size:40px;
+  font-weight: bold;
+}
+/* Level 1 header */
+h1 {
+  color: #ED4F4F;
+}
+/* Level 2 header */
+h2 {
+  color: #ED4F4F;
+}
+/* Level 4 header */
+h4 {
+  font-weight: bold;
+}
+/* Table of contents */
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #ED4F4F;
+    border-color: #ED4F4F;
+}
+    
+</style>
+
+```{r setup, include=FALSE}
+# global chunk options
+knitr::opts_chunk$set(echo = TRUE,
+                      error = TRUE,
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA,
+                      fig.width=6, 
+                      fig.height=5)
+```
+
+## Introduction
+
+This group assignment will use the `Cars93` data-set from the `MASS` package and is inspired from the Lab 8 written by CMU's Professor Alexandra Chouldechova for her Programming in R for Analytics course.
+
+Packages to be used:
+
+1. `MASS`
+2. `tidyverse`
+3. `broom`
+
+```{r}
+library(MASS)
+library(tidyverse)
+library(broom)
+```
+
+## Data
+
+The `Cars93` data-set consists of data from 93 cars on sale in the USA in 1993. It has 27 variables.
+
+
+```{r}
+attach(MASS::Cars93)
+Cars93 <- as_tibble(MASS::Cars93)
+glimpse(Cars93)
+```
+
+## Exploratory data analysis
+
+#### Question 1
+
+Create a scatter plot between `Price` and the `EngineSize`. Comment
+on the relationship. What do you think the correlation coefficient is between the variables?
+
+```{r, fig.align='center', fig.height = 4}
+ggplot(Cars93, aes(x= EngineSize, y= Price)) +
+  geom_point() +
+  labs(x = "Engine Size (liters)", y = "Price (in $1000)")
+```
+**Answer:**
+The bigger the engine size the more the price will be
+
+#### Question 2
+
+Create a scatter plot between `Price` and the categorical variable `AirBags`. Comment on the relationship. Add `geom_jitter()` to your plot. What do you notice about the variability in `Price` between different levels?
+
+
+```{r, fig.align='center', fig.height = 4}
+ggplot(Cars93, aes(x= AirBags, y= Price)) +
+  geom_jitter() +
+  labs(x = "Airbags", y = "Price (in $1000)")
+```
+
+**Answer:**
+Usually the more airbags there are the higher the price it looks like
+
+## Model fit
+
+#### Question 3
+
+Fit a linear model for predicting `Price` using `EngineSize`, using the `lm()` function. Save it as an object `mod.fit`. What are the values of $b_0$ and $b_1$? Write out the model. Hint: `tidy()`
+
+```{r}
+mod.fit <- lm(Price ~ EngineSize,data = Cars93)
+
+mod.fit %>%
+  broom::tidy()
+```
+
+**Answer:...**
+b0 = 4.669, b1 = 5.563
+
+#### Question 4
+
+Interpret the slope of the fitted model. Does the intercept have any practical meaning within the scope of our data?
+
+**Answer:... **
+Based off the table the intercept doesn’t fall on or within the scope of our data 
+
+#### Question 5 
+
+How much of the variability in the outcome variable `Price` is explained by the regression equation? Comment on the $R^2$. *Hint*: `glance()`
+
+```{r}
+glance(mod.fit)
+```
+**Answer:...**
+The varaiability in regard to p.value is the same for price as far as the r sqaured I cant really see how I would compare when there is no R^2 in the previous table
+
+#### Question 6 
+
+Plot the residual plot and comment on the model fit. *Hint*: `augment()`
+
+```{r}
+mod.fit %>%
+  broom::augment()
+
+mod.fit %>%
+  augment() %>%
+  ggplot(mapping = aes(x= EngineSize, y= .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "Engine size (liters)", y = "Residualas")
+```
+
+**Answer:...**
+The given line we see that some point lie on the line but most are below
+
+#### Question 7 
+
+Add the residuals to a copy of the `Cars93` data set and compute the average residuals for each manufacturer. Sort the manufactures by the average residuals, in descending order. Are there manufacturers that, on average, produce larger or smaller residuals? What do you notice about the residual patterns with respect to the manufacturers?
+
+```{r}
+
+Cars93.copy <- augment(mod.fit, data= Cars93)
+
+average.resid <- Cars93.copy %>%
+  group_by(Manufacturer) %>%
+  summarise(avg.resid = mean(.resid, na.rm=TRUE)) %>%
+  arrange(desc(avg.resid))
+
+head(average.resid)
+```
+**Answer:...**
+
+That they are pretty low about 13-0 is where they mostly lie with a few outliers at 18 and 29
+
+## Exploring additional variables
+
+
+Below is figure showing how `Price` varies with `EngineSize` in the `Cars93`, with accompanying regression lines. There are two plots, one for USA cars, and one for non-USA cars.
+
+```{r, fig.align='center', fig.height = 4}
+ggplot(Cars93, aes(x = EngineSize, y = Price, colour = Origin)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  facet_wrap("Origin") + 
+  theme(legend.position="none")
+```
+
+#### Question 8
+
+Use the `lm()` function and fit two models to regress `Price` on `EngineSize` with respect to the `Origin` (US and non-US). Hint: `filter()`
+
+```{r}
+# US origin
+us.orgin <- Cars93.copy %>%
+  filter(Origin == "USA") %>%
+  lm(Price ~ EngineSize, data = Cars93.copy)
+
+Cars93.copy
+# For non-US origin
+
+```
+
+
+#### Question 9
+
+Compare and contrast the fitted models in Question 8 (1-4 lines).
+
+**Answer:... **
+
+#### Question 10
+
+Multiple regression and categorical predictors were briefly introduced in the class. Do you think analyzing the price based on the size of the engine and the origin will give us more information than the model fitted in Question 3? Justify your answer.
+
+**Answer:...**
+
+
+## References {#References-link}
+
+1. http://www.andrew.cmu.edu/user/achoulde/94842/
+
