@@ -1,24 +1,70 @@
 # Python Coursework
 
-This folder contains Python-based assignments and projects, showcasing skills in data analysis, machine learning, and scientific computing.
+This folder contains Python-based assignments and projects completed as part of my Data Science coursework at Michigan State University. The work highlights skills in machine learning, scientific computing, regression analysis, debugging, and collaborative projects.
 
-## 📚 Structure
+---
 
-- **Homework**: Tasks covering machine learning concepts, including:
-  - Perceptron models
-  - Support Vector Machines (SVM)
-  - Principal Component Analysis (PCA)
-- **[Tech-Science-2](./Python-Coursework/Tech-Science-2)**:  
-  A final project focused on galaxy classification using scientific computing, machine learning, and data visualization techniques.
+## 📚 Coursework Overview
 
-## 🚀 Key Topics
-- Machine Learning (Classification, PCA, SVM)
-- Data Wrangling & Processing
-- Scientific Computing Techniques
-- Jupyter Notebooks for analysis and visualization
+### **Homework 1: Git Practice, Debugging, Python Packages & Classes**
+- Focused on:
+  - Version control using **Git**.
+  - Debugging Python code.
+  - Implementing **Python classes** and custom packages.
+- Skills: OOP, Git workflows, debugging.
 
-## 🛠️ Tools & Libraries
+---
+
+### **Homework 2: Orbital Mechanics Simulation**
+- Simulated planetary orbits using Python.
+- Topics:
+  - Physics-based modeling.
+  - Numerical computation and visualization.
+- Skills: Scientific computing, `numpy`, `matplotlib`.
+
+---
+
+### **Homework 3: Regression Analysis**
+- Built and interpreted **linear regression models** on real-world datasets.
+- Skills: Data wrangling, statistical modeling, visualization.
+
+---
+
+### **Homework 4: Perceptron and SVM Classification**
+- Implemented a custom **Perceptron** from scratch.
+- Applied **Support Vector Machines (SVM)** and **PCA** for dimensionality reduction.
+- Performed hyperparameter tuning with GridSearch.
+- Skills: Machine Learning fundamentals, `scikit-learn`, classification techniques.
+
+---
+
+## 🏆 Projects
+
+### **Final Project (CMSE 202): Galaxy Classification**
+- Developed machine learning models to classify galaxies based on astrophysical data.
+- Techniques used:
+  - **SVM**, **PCA**, and data visualization.
+  - Team collaboration using Git.
+- Skills: Scientific computing, ML pipelines, astrophysics datasets.
+
+---
+
+### **Final Project (CMSE 201): Data Analysis & Visualization**
+- Applied Python to analyze and visualize complex datasets.
+- Focus areas:
+  - Data wrangling.
+  - Exploratory Data Analysis (EDA).
+  - Effective use of `pandas` and `matplotlib` for insights.
+- Demonstrated ability to communicate data-driven findings through Jupyter Notebooks.
+
+---
+
+## 🚀 Key Tools & Libraries
+- `pandas`, `numpy`
 - `scikit-learn`
-- `pandas`
-- `numpy`
-- `matplotlib`
+- `matplotlib`, `seaborn`
+- Custom Python Classes & Packages
+- Git & GitHub for version control
+- Jupyter Notebooks for reproducible analysis
+
+Each assignment and project is provided as a Jupyter Notebook (`.ipynb`), showcasing both technical implementation and analytical insights.
