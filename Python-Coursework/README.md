@@ -4,6 +4,27 @@ This folder contains Python-based assignments and projects completed as part of 
 
 ---
 
+## 🏆 Projects
+
+### **Final Project (CMSE 202): Galaxy Classification**
+- Developed machine learning models to classify galaxies based on astrophysical data.
+- Techniques used:
+  - **SVM**, **PCA**, and data visualization.
+  - Team collaboration using Git.
+- Skills: Scientific computing, ML pipelines, astrophysics datasets.
+
+---
+
+### **Final Project (CMSE 201): Data Analysis & Visualization**
+- Applied Python to analyze and visualize complex datasets.
+- Focus areas:
+  - Data wrangling.
+  - Exploratory Data Analysis (EDA).
+  - Effective use of `pandas` and `matplotlib` for insights.
+- Demonstrated ability to communicate data-driven findings through Jupyter Notebooks.
+
+---
+
 ## 📚 Coursework Overview
 
 ### **Homework 1: Git Practice, Debugging, Python Packages & Classes**
@@ -35,27 +56,6 @@ This folder contains Python-based assignments and projects completed as part of 
 - Applied **Support Vector Machines (SVM)** and **PCA** for dimensionality reduction.
 - Performed hyperparameter tuning with GridSearch.
 - Skills: Machine Learning fundamentals, `scikit-learn`, classification techniques.
-
----
-
-## 🏆 Projects
-
-### **Final Project (CMSE 202): Galaxy Classification**
-- Developed machine learning models to classify galaxies based on astrophysical data.
-- Techniques used:
-  - **SVM**, **PCA**, and data visualization.
-  - Team collaboration using Git.
-- Skills: Scientific computing, ML pipelines, astrophysics datasets.
-
----
-
-### **Final Project (CMSE 201): Data Analysis & Visualization**
-- Applied Python to analyze and visualize complex datasets.
-- Focus areas:
-  - Data wrangling.
-  - Exploratory Data Analysis (EDA).
-  - Effective use of `pandas` and `matplotlib` for insights.
-- Demonstrated ability to communicate data-driven findings through Jupyter Notebooks.
 
 ---
 
